@@ -24,9 +24,8 @@
 ### Technologies Utilisées :
 * Node.js
 * Express.js
-* Flutter
-* Dart
-* Firebase
+* React Native
+* Mongo db
 ### Installation et Exécution de l'Application :
 Node.js est requis pour pouvoir exécuter cette application. C'est le back end de l'app. Pour installer tous les modules nécessaires au fonctionnement de notre jeu, exécutez la commande suivante :
 ```
