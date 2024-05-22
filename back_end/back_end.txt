@@ -1,0 +1,8 @@
+//il fout exicuter le app apris aller vers le front pour tester
+//command pour exicuter
+
+node app
+
+ou
+
+npx nodemon app
