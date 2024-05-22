@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions,ImageBackground } from 'react-native';
 import Colors from '../Utils/Colors';
+import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 700 || height >= 1000;
 
 export default function LoginScreen({ navigation }) {
     // Gestion des états des entrées utilisateur
-    const [username, setUsername] = useState('');
+    const [email, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     // Fonction de gestion de l'appui sur le bouton de connexion
-    const handleSignIn = () => {
-        // Implémentez ici votre logique de connexion
-        navigation.navigate('homeUser');
-        console.log('Se connecter:', { username, password });
+    const handleSignIn = async () => {
+        try {
+            const response = await axios.post('http://192.168.100.189:5003/login', {
+                email,
+                password,
+            });
+
+            if (response.status === 200) {
+                console.log('Login successful:', response.data);
+                navigation.navigate('homeUser'); // Replace with the appropriate screen name
+            } else {
+                console.error('Failed to log in:', response.data);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
     };
 
     // Fonction de gestion de l'appui sur le lien d'inscription
@@ -34,8 +47,8 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.titleText}>Login</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Username"
-                        value={username}
+                        placeholder="Email"
+                        value={email}
                         onChangeText={setUsername}
                     />
                     <TextInput

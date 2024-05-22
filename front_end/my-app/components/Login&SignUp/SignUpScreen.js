@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions,ImageBackground } from 'react-native';
 import Colors from '../Utils/Colors';
-
+import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 
 export default function SignUpScreen({ navigation, route }) {
@@ -14,12 +14,25 @@ export default function SignUpScreen({ navigation, route }) {
     const [email, setEmail] = useState('');
 
     // Fonction de gestion de l'appui sur le bouton d'inscription
-    const handleSignUp = () => {
-        // Implémentez votre logique d'inscription ici
-        console.log(`Sign up as ${role}:`, { username, password, email });
-        // Naviguez vers l'écran principal après l'inscription réussie
-        navigation.navigate('MainScreen');
+    const handleSignUp = async () => {
+        try {
+            const response = await axios.post('http://192.168.100.189:5003/register', {
+                name: username,
+                email,
+                password,
+            });
+
+            if (response.status === 201) {
+                console.log('User registered successfully');
+                navigation.navigate('homeUser'); // Replace with the appropriate screen name
+            } else {
+                console.error('Failed to register user:', response.data);
+            }
+        } catch (error) {
+            console.error('Error during sign-up:', error);
+        }
     };
+
 
     return (
         <ImageBackground
