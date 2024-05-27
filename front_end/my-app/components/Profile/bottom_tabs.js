@@ -5,6 +5,7 @@ import { Icon, colors } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 
 import Colors from '../../components/Utils/Colors';
+import { color } from 'react-native-elements/dist/helpers';
 
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
@@ -16,25 +17,25 @@ export default function BottomTabs() {
     {
       icon: 'home',
       text: 'Home',
-      color: 'grey',
+      color:"grey",
       screen: 'homeUser', // Specify the screen to navigate to when this icon is pressed
     },
     {
-      icon: 'search',
-      text: 'Trouver service',
-      color: 'grey',
-      screen: 'form', // Specify the screen to navigate to when this icon is pressed
+        icon:'today',
+        text:'Calendrier',
+        color:"grey",
+        screen: 'Calendar',
     },
     {
       icon: 'bookmark-outline',
       text: 'Travaux',
       color: 'grey',
-      screen: '', // Specify the screen to navigate to when this icon is pressed
+      screen: 'Booking', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'person-outline',
       text: 'Profile',
-      color:  Colors.PRIMARY,
+      color:colors.primary,
       screen: 'Profile', // Specify the screen to navigate to when this icon is pressed
     },
   ];

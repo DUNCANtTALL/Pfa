@@ -6,6 +6,8 @@ const userRoutes = require('./routes/userRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
 const notificationRoutes = require('./routes/notificationRoutes'); 
+const User = require('./models/User');
+
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +23,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api/notifications', notificationRoutes); 
+
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');

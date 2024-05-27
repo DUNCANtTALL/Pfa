@@ -16,25 +16,26 @@ export default function BottomTabs() {
       icon: 'home',
       text: 'Home',
       color: 'grey',
-      screen: 'homeUser', // Specify the screen to navigate to when this icon is pressed
+      screen: 'homeClient', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'search',
       text: 'Trouver service',
       color: Colors.PRIMARY,
+      
       screen: 'form', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'bookmark-outline',
       text: 'Travaux',
       color: 'grey',
-      screen: '', // Specify the screen to navigate to when this icon is pressed
+      screen: 'BookingUser', // Specify the screen to navigate to when this icon is pressed
     },
     {
-      icon: 'person-outline',
-      text: 'Profile',
-      color: 'grey',
-      screen: 'Profile', // Specify the screen to navigate to when this icon is pressed
+        icon: 'person-outline',
+        text: 'Profile',
+        color: 'grey',
+        screen: 'ServiceProfile', // Specify the screen to navigate to when this icon is pressed
     },
   ];
 

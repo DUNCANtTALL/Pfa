@@ -1,34 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const Verifier = require('email-verifier');
 
-async function verifyEmail(email) {
-  return new Promise((resolve, reject) => {
-    Verifier.verify(email, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(data.smtpCheck === 'true');
-    });
-  });
-}
+
 
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;
+  console.log('Received data:', req.body); // Log received data
+
+  if (!name || !email || !password || !role) {
+      return res.status(400).send({ error: 'All fields are required' });
+  }
 
   try {
-    const emailExists = await verifyEmail(email);
-    if (!emailExists) {
-      return res.status(400).send({ error: 'Email does not exist' });
-    }
-
-    const user = new User({ name, email, password, role });
-    await user.save();
-    
-    res.status(201).send({ message: 'User registered successfully', user });
+      const user = new User({ name, email, password, role });
+      await user.save();
+      res.status(201).send({ message: 'User registered successfully', user });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+      console.error('Error in /register route:', error); // Log error for debugging
+      res.status(400).send({ error: error.message });
   }
 });
 

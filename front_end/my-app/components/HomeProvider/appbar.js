@@ -1,7 +1,8 @@
 
 import { StyleSheet, Text, View,Dimensions } from 'react-native';
-import {Ionicons} from 'react-native-vector-icons'
 import { Badge } from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 
 export default function AppBar(){
     return (
