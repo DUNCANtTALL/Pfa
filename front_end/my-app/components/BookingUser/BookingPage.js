@@ -6,7 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 export default function BookingPage({ route, navigation }) {
-    const { savedJobs } = route.params || { savedJobs: [] };
     const [bookings, setBookings] = useState([]);
     const [client, setClient] = useState(null);
     const handleDeleteBooking = async (id) => {
@@ -89,7 +88,7 @@ export default function BookingPage({ route, navigation }) {
 />
                 )}
             </View>
-            <BottomTabs savedJobs={savedJobs} />
+            <BottomTabs/>
         </SafeAreaView>
     );
 }

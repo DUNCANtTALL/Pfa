@@ -27,7 +27,7 @@ export default function BottomTabs() {
     },
     {
       icon: 'bookmark-outline',
-      text: 'Travaux',
+      text: 'Booking',
       color: 'grey',
       screen: 'BookingUser', // Specify the screen to navigate to when this icon is pressed
     },

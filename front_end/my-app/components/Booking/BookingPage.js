@@ -5,7 +5,6 @@ import BottomTabs from './bottom_tabs';
 import Details from './details';
 
 export default function BookingPage({ route, navigation }) {
-    const { savedJobs } = route.params || { savedJobs: [] };
 
     return (
         <SafeAreaView style={styles.container}>

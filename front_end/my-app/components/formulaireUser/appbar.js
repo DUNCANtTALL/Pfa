@@ -1,145 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, ScrollView, StyleSheet, Dimensions, FlatList, TouchableOpacity, Alert } from 'react-native';
-import AppBar from './appbar';
-import BottomTabs from './bottom_tabs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
-const handleDeleteBooking = async (id) => {
-  Alert.alert(
-      'Confirmation',
-      'Are you sure you want to delete this booking?',
-      [
-          {
-              text: 'Cancel',
-              style: 'cancel',
-          },
-          {
-              text: 'Yes',
-              onPress: async () => {
-                  try {
-                      await axios.delete(`http://192.168.100.17:5003/api/bookings/Delete/${id}`);
-                      setBookings(bookings.filter((booking) => booking._id !== id));
-                  } catch (error) {
-                      console.error('Error deleting booking:', error);
-                  }
-              },
-          },
-      ],
-      { cancelable: false }
-  );
-};
+import { StyleSheet, Text, View ,Dimensions} from 'react-native';
+import { Badge } from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-export default function BookingPage({ route, navigation }) {
-    const { savedJobs } = route.params || { savedJobs: [] };
-    const [bookings, setBookings] = useState([]);
-    const [client, setClient] = useState(null);
-
-    
-    useEffect(() => {
-        const getClientId = async () => {
-            try {
-                const storedClientId = await AsyncStorage.getItem('userId');
-                setClient(storedClientId);
-            } catch (error) {
-                console.error('Error fetching client ID from AsyncStorage:', error);
-            }
-        };
-
-        getClientId();
-    }, []);
-
-    useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const response = await axios.get(`http://192.168.100.17:5003/api/bookings/bookings/user/${client}`);
-                setBookings(response.data);
-            } catch (error) {
-                console.error('Error fetching bookings:', error);
-            }
-        };
-
-        if (client) {
-            fetchBookings();
-        }
-    }, [client]);
-
+export default function AppBar(){
     return (
-        <SafeAreaView style={styles.container}>
-            <AppBar />
-            <View style={styles.content}>
-                <Text style={styles.title}>Your Bookings</Text>
-                {bookings.length === 0 ? (
-                    <Text style={styles.noBookingText}>No bookings found.</Text>
-                ) : (
-                    <FlatList
-                        data={bookings}
-                        keyExtractor={(item) => item._id}
-                        renderItem={({ item }) => (
-                            <View style={styles.booking}>
-                                <TouchableOpacity onPress={() => handleDeleteBooking(item._id)}>
-                                    <Text style={styles.deleteButton}>Delete</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.bookingTitle}>{item.service}</Text>
-                                <Text style={styles.bookingDetails}>Category: {item.category}</Text>
-                                <Text style={styles.bookingDetails}>Date: {new Date(item.date).toDateString()}</Text>
-                                <Text style={styles.bookingDetails}>City: {item.city}</Text>
-                                <Text style={styles.bookingDetails}>Status: {item.status}</Text>
-                            </View>
-                        )}
-                    />
-                )}
+          <View style={styles.appbar}>
+            {/* Greetings and name */}
+            <View>
+              <Text style={{color:'grey'}}>Bonjour</Text>
+              <Text style={{fontSize:18,fontWeight:'bold'}}>Nom Prenom  </Text>
             </View>
-            <BottomTabs savedJobs={savedJobs} />
-        </SafeAreaView>
-    );
+            {/* ratings and notification */}
+       <View style={{
+                flexDirection:'row', 
+                alignItems:'center',
+                paddingHorizontal:10,
+                }}>    
+         </View>
+      <View>
+           <Ionicons
+              style={{backgroundColor:'white',padding:6,}} 
+              name = 'notifications-outline' 
+              size={22}/>
+           <Badge status="error" value={3} containerStyle={{ position: 'absolute', top: -4, right: -4, }} />
+      </View>
+            </View>
+      );
 }
 
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    appbar:{
+      width: isDesktop ? '40%' : "95%",
+      alignItems: 'center',
+      alignSelf:'center',
+      flexDirection:'row',
+      justifyContent:'space-between',
+      margin:10,
+      paddingTop:10
     },
-    content: {
-        flex: 1,
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    noBookingText: {
-        fontSize: 18,
-        textAlign: 'center',
-    },
-    booking: {
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 10,
-        padding: 15,
-        backgroundColor: '#fff',
-        elevation: 3,
-        position: 'relative',
-    },
-    deleteButton: {
-        position: 'absolute',
-        top: 5,
-        right: 5,
-        color: 'red',
-        fontWeight: 'bold',
-    },
-    bookingTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    bookingDetails: {
-        fontSize: 16,
-        marginBottom: 3,
-    },
-});
+    rating:{
+      backgroundColor: 'white', 
+      alignItems:'center',
+      justifyContent:'center',
+      borderRadius:10,
+      paddingHorizontal:20,
+      paddingVertical:10,
+      margin:7
+      },
+  });

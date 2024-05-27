@@ -51,7 +51,7 @@ export default function Form({ navigation }) {
 
       if (response.status === 201) {
         Alert.alert('Success', 'Form submitted successfully');
-        navigation.navigate('Travaux');
+        navigation.navigate('Booking');
       } else {
         Alert.alert('Error', 'Failed to submit the form');
       }
