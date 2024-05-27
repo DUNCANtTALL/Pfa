@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import AppBar from './appbar';
 import BottomTabs from './bottom_tabs';
 import Details from './details';
 
 export default function BookingPage({ route, navigation }) {
+    const [bookings, setBookings] = useState([]);
+
+    // Simulating the retrieval of bookings from AsyncStorage or other storage
+    useEffect(() => {
+        // Fetch bookings for the logged-in provider and update state
+        // For now, let's assume bookings are passed through props
+        const providerBookings = route.params?.bookings ?? [];
+        setBookings(providerBookings);
+    }, [route.params?.bookings]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -12,16 +21,12 @@ export default function BookingPage({ route, navigation }) {
             <View style={styles.content}>
                 <Text style={styles.title}>Saved Jobs</Text>
                 <ScrollView>
-                    {savedJobs.length > 0 ? (
-                        savedJobs.map((job, index) => (
-                            <Details key={index} job={job} />
-                        ))
-                    ) : (
-                        <Text>No saved jobs.</Text>
-                    )}
+                    {bookings.map((booking, index) => (
+                        <Details key={index} booking={booking} />
+                    ))}
                 </ScrollView>
             </View>
-            <BottomTabs savedJobs={savedJobs} />
+            <BottomTabs />
         </SafeAreaView>
     );
 }
