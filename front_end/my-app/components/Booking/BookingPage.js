@@ -3,17 +3,44 @@ import { SafeAreaView, View, Text, ScrollView, StyleSheet, Dimensions } from 're
 import AppBar from './appbar';
 import BottomTabs from './bottom_tabs';
 import Details from './details';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+
 
 export default function BookingPage({ route, navigation }) {
     const [bookings, setBookings] = useState([]);
+    const [client, setClient] = useState(null);
+    useEffect(() => {
+        const getClientId = async () => {
+          try {
+            const storedClientId = await AsyncStorage.getItem('userId');
+            if (storedClientId) {
+              setClient(storedClientId);
+            } else {
+              console.error('Client ID not found in AsyncStorage');
+            }
+          } catch (error) {
+            console.error('Error fetching client ID from AsyncStorage:', error);
+          }
+        };
+    
+        getClientId();
+      }, []);
 
     // Simulating the retrieval of bookings from AsyncStorage or other storage
     useEffect(() => {
-        // Fetch bookings for the logged-in provider and update state
-        // For now, let's assume bookings are passed through props
-        const providerBookings = route.params?.bookings ?? [];
-        setBookings(providerBookings);
-    }, [route.params?.bookings]);
+        const fetchAppliedBookings = async () => {
+          try {
+            const response = await axios.get(`http://192.168.100.17:5003/api/bookings/applied/${client}`);
+            setBookings(response.data);
+          } catch (error) {
+            console.error('Error fetching applied bookings:', error);
+          }
+        };
+      
+        fetchAppliedBookings();
+      }, []);
 
     return (
         <SafeAreaView style={styles.container}>
