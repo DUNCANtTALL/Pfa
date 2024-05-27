@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, ScrollView, StyleSheet, Dimensions, FlatList,TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, StyleSheet, Dimensions, FlatList,TouchableOpacity,Alert } from 'react-native';
 import AppBar from './appbar';
 import BottomTabs from './bottom_tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,31 @@ export default function BookingPage({ route, navigation }) {
     const { savedJobs } = route.params || { savedJobs: [] };
     const [bookings, setBookings] = useState([]);
     const [client, setClient] = useState(null);
+    const handleDeleteBooking = async (id) => {
+        Alert.alert(
+            'Confirmation',
+            'Are you sure you want to delete this booking?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Yes',
+                    onPress: async () => {
+                        try {
+                            await axios.delete(`http://192.168.100.17:5003/api/bookings/Delete/${id}`);
+                            setBookings(bookings.filter((booking) => booking._id !== id));
+                        } catch (error) {
+                            console.error('Error deleting booking:', error);
+                        }
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
 
     useEffect(() => {
         const getClientId = async () => {
