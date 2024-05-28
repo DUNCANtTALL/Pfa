@@ -9,24 +9,19 @@ import Form from './formulaire';
 export default function PageForm() {
   
   return (
-    <SafeAreaView style={{backgroundColor:'#F4F6FA',flex:1,marginTop:30}}>
+    <SafeAreaView style={{flex:1,marginTop:0}}>
       <StatusBar style="auto" />
-       <AppBar />
-       
-       <View style={{alignSelf:'center'}}>
-        
-       </View>
-   
-   <View style={{margin:10,backgroundColor:'white',flex:1,borderTopRightRadius:20,borderTopLeftRadius:20,marginTop:30}}>
-    <View style={{flexDirection:'row',alignItems:'center', justifyContent:'space-between', margin:17}}>
-     
-    </View>
-    <ScrollView>
-      <Form/>
-    </ScrollView>
+      <AppBar />
+      <Divider width={1}/>
+      <View style={{alignSelf:'center'}}></View>
+      <View style={{flex:1,borderTopRightRadius:20,borderTopLeftRadius:20}}>
+      <View style={{flexDirection:'row',alignItems:'center', justifyContent:'space-between', marginTop:20}}></View>
+      <ScrollView>
+        <Form/>
+      </ScrollView>
       <Divider width={1}/>
       <BottomTabs/>
-   </View>
+      </View>
     </SafeAreaView>
   );
 }
