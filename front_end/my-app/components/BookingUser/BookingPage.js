@@ -21,7 +21,7 @@ export default function BookingPage({ route, navigation }) {
                     text: 'Yes',
                     onPress: async () => {
                         try {
-                            await axios.delete(`http://192.168.100.17:5003/api/bookings/Delete/${id}`);
+                            await axios.delete(`http://192.168.1.3:5003/api/bookings/Delete/${id}`);
                             setBookings(bookings.filter((booking) => booking._id !== id));
                         } catch (error) {
                             console.error('Error deleting booking:', error);

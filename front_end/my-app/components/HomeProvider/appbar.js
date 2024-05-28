@@ -1,8 +1,7 @@
 
-import { StyleSheet, Text, View,Dimensions } from 'react-native';
+import { StyleSheet, Text, View ,Dimensions} from 'react-native';
+import {Ionicons} from 'react-native-vector-icons'
 import { Badge } from 'react-native-elements';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
 
 export default function AppBar(){
     return (
@@ -17,13 +16,7 @@ export default function AppBar(){
                 flexDirection:'row', 
                 alignItems:'center',
                 paddingHorizontal:10,
-                }}>
-              <View style={styles.rating}>
-                  <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                     <Ionicons name='star' color='#F99A0E' size={20} />
-                  <View style={{width:5}}/>
-                <Text>4.89</Text>
-             </View>
+                }}>    
          </View>
       <View>
            <Ionicons
@@ -33,14 +26,11 @@ export default function AppBar(){
            <Badge status="error" value={3} containerStyle={{ position: 'absolute', top: -4, right: -4, }} />
       </View>
             </View>
-          </View>
       );
 }
 
-
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
-
 const styles = StyleSheet.create({
     appbar:{
       width: isDesktop ? '40%' : "95%",
@@ -49,7 +39,7 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       justifyContent:'space-between',
       margin:10,
-      paddingTop:10
+      paddingTop:20
     },
     rating:{
       backgroundColor: 'white', 

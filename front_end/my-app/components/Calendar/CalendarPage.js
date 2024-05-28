@@ -148,10 +148,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F4F6FA',
         paddingHorizontal: isDesktop ? 20 : 10,
+        
     },
 
     calendarContainer: {
-        margin: 10,
+        margin: 20,
+        borderWidth:2,
+        borderColor:Colors.PRIMARY,
         backgroundColor: Colors.WHITE,
         borderRadius: 20,
         padding: isDesktop ? 20 : 10,

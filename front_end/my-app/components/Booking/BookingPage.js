@@ -28,14 +28,12 @@ export default function BookingPage({ route, navigation }) {
 
     useEffect(() => {
         const fetchAppliedBookings = async () => {
-            try {
-                if (client) {
-                    const response = await axios.get(`http://192.168.100.17:5003/api/bookings/applied/${client}`);
-                    setBookings(response.data);
-                }
-            } catch (error) {
-                console.error('Error fetching applied bookings:', error);
-            }
+          try {
+            const response = await axios.get(`http://192.168.100.17:5003/api/bookings/applied/${client}`);
+            setBookings(response.data);
+          } catch (error) {
+            console.error('Error fetching applied bookings:', error);
+          }
         };
         fetchAppliedBookings();
     }, [client]);

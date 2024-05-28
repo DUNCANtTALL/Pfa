@@ -1,43 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Divider, Input, Icon } from 'react-native-elements';
-import AppBar from '../HomeProvider/appbar';
-import BottomTabs from '../HomeProvider/bottom_tabs';
-import JobDetail from '../HomeProvider/job_detail';
-import { Picker } from '@react-native-picker/picker';
+import { SafeAreaView, View, Text, ScrollView } from 'react-native';
+import AppBar from './appbar';
+import { Divider, Input, Icon, Button } from 'react-native-elements';
+import BottomTabs from './bottom_tabs';
 import axios from 'axios';
-import Colors from '../Utils/Colors';
-import { services, cities } from '../formulaireUser/data'; // Adjust the import path as needed
+import JobDetail from './job_detail';
 
 export default function Home({ navigation }) {
   const [bookings, setBookings] = useState([]);
   const [searchInput, setSearchInput] = useState('');
-  const [searchMethod, setSearchMethod] = useState('city'); // Default search method
+  const [categoryInput, setCategoryInput] = useState('');
 
   useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get('http://192.168.100.17:5003/api/bookings/GetAll');
+        setBookings(response.data);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    };
+
     fetchBookings();
   }, []);
-
-  const fetchBookings = async () => {
-    try {
-      const response = await axios.get('http://192.168.100.17:5003/api/bookings/GetAll');
-      setBookings(response.data);
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-    }
-  };
 
   const handleSearch = async () => {
     try {
       let response;
-      if (searchInput.trim()) {
-        if (searchMethod === 'city') {
-          response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCity/${searchInput}`);
-        } else if (searchMethod === 'category') {
-          response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCategory/${searchInput}`);
-        }
+      if (searchInput.trim() && categoryInput.trim()) {
+        response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCityAndCategory/${searchInput}/${categoryInput}`);
+      } else if (searchInput.trim()) {
+        response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCity/${searchInput}`);
+      } else if (categoryInput.trim()) {
+        response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCategory/${categoryInput}`);
       } else {
-        response = await axios.get('http://192.168.100.17:5003/api/bookings/GetAll');
+        response = await axios.get('http://192.168.1.3:5003/api/bookings/GetAll');
       }
       setBookings(response.data);
     } catch (error) {
@@ -52,37 +49,38 @@ export default function Home({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <AppBar />
-      <View style={styles.container}>
-        <Divider width={1} />
-        <View style={styles.searchContainer}>
-          <Text style={styles.searchLabel}>Search by:</Text>
-          <Picker
-            selectedValue={searchMethod}
-            style={styles.picker}
-            onValueChange={(itemValue) => setSearchMethod(itemValue)}
-          >
-            <Picker.Item label="City" value="city" />
-            <Picker.Item label="Category" value="category" />
-          </Picker>
-        </View>
-        <View style={styles.inputContainer}>
-          <Picker
-            selectedValue={searchInput}
-            style={styles.pickerInput}
-            onValueChange={(itemValue) => setSearchInput(itemValue)}
-          >
-            <Picker.Item label={`Select ${searchMethod === 'city' ? 'city' : 'category'}`} value="" />
-            {(searchMethod === 'city' ? cities : services).map((item, index) => (
-              <Picker.Item key={index} label={item} value={item} />
-            ))}
-          </Picker>
-          <Icon
-            name='search'
-            type='ionicon'
-            color={Colors.PRIMARY}
-            size={24}
-            onPress={handleSearch}
-          />
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: 20, marginTop: 10 }}>
+        <Input
+          containerStyle={{ flex: 1, backgroundColor: 'white', borderRadius: 10, borderWidth: 1, borderColor: 'grey' }}
+          leftIcon={<Icon name='location-outline' type='ionicon' color="grey" size={20} />}
+          placeholder='Enter city name...'
+          placeholderTextColor='grey'
+          value={searchInput}
+          onChangeText={setSearchInput}
+        />
+        <Input
+          containerStyle={{ flex: 1, backgroundColor: 'white', borderRadius: 10, borderWidth: 1, borderColor: 'grey' }}
+          leftIcon={<Icon name='list-outline' type='ionicon' color="grey" size={20} />}
+          placeholder='Enter category...'
+          placeholderTextColor='grey'
+          value={categoryInput}
+          onChangeText={setCategoryInput}
+        />
+        <Button
+          title='Search'
+          buttonStyle={{
+            width: 100,
+            paddingVertical: 10,
+            backgroundColor: '#529A69',
+            borderRadius: 5,
+          }}
+          onPress={handleSearch}
+        />
+      </View>
+      <View style={{ margin: 10, backgroundColor: 'white', flex: 1, borderTopRightRadius: 20, borderTopLeftRadius: 20, marginTop: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', margin: 17 }}>
+          <Text style={{ color: 'grey', fontSize: 18 }}>Recherche par ville ou catégorie</Text>
+          <Text style={{ color: '#85D6B3', fontSize: 17 }}>Résultat</Text>
         </View>
         <ScrollView>
           {bookings.map((booking) => (
@@ -92,40 +90,7 @@ export default function Home({ navigation }) {
         <Divider width={1} />
         <BottomTabs />
       </View>
+
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    marginTop: 0,
-    paddingLeft: 12,
-    paddingRight: 12,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginHorizontal: 25,
-    marginTop: 0,
-  },
-  searchLabel: {
-    marginRight: 10,
-  },
-  picker: {
-    height: 50,
-    width: 150,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  pickerInput: {
-    flex: 1,
-    height: 50,
-  },
-});

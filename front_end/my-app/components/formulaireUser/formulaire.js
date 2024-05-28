@@ -64,7 +64,7 @@ export default function Formulaire({ navigation }) {
     };
 
     try {
-      const response = await axios.post('http://192.168.100.17:5003/api/bookings/Add', formData);
+      const response = await axios.post('http://192.168.1.3:5003/api/bookings/Add', formData);
 
       if (response.status === 201) {
         Alert.alert('Success', 'Form submitted successfully');
@@ -81,14 +81,12 @@ export default function Formulaire({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Service</Text>
-      <View style={styles.inputContainer}>
       <TextInput
         style={styles.input}
         value={service}
         onChangeText={setService}
-        placeholder="Enter the Service"
+        placeholder="Enter your service"
       />
-      </View>
 
       <Text style={styles.label}>Category</Text>
       <Picker
