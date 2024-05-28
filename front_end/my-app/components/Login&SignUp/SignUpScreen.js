@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions,ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions,ImageBackground,Alert } from 'react-native';
 import Colors from '../Utils/Colors';
-
+import axios from 'axios';
 const { width, height } = Dimensions.get('window');
 
 export default function SignUpScreen({ navigation, route }) {
@@ -13,12 +13,36 @@ export default function SignUpScreen({ navigation, route }) {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
 
-    // Fonction de gestion de l'appui sur le bouton d'inscription
-    const handleSignUp = () => {
-        // Implémentez votre logique d'inscription ici
-        console.log(`Sign up as ${role}:`, { username, password, email });
-        // Naviguez vers l'écran principal après l'inscription réussie
-        navigation.navigate('MainScreen');
+    const handleSignUp = async () => {
+        try {
+            const response = await axios.post('http://192.168.1.3:5003/api/users/register', {
+                name: username,
+                email,
+                password,
+                role
+            });
+
+            if (response.status === 201) {
+                console.log('User registered successfully');
+                Alert.alert('Success', 'User registered successfully');
+                navigation.navigate('homeUser');
+            } else {
+                console.error('Failed to register user:', response.data);
+                Alert.alert('Registration Failed', response.data.error || 'An error occurred');
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error('Error response data:', error.response.data);
+                Alert.alert('Registration Failed', error.response.data.error || 'An error occurred');
+            } else if (error.request) {
+                console.error('Error request data:', error.request);
+                Alert.alert('Registration Failed', 'No response from server.');
+            } else {
+                console.error('Error message:', error.message);
+                Alert.alert('Registration Failed', error.message);
+            }
+            console.error('Error config:', error.config);
+        }
     };
 
     return (

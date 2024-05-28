@@ -22,13 +22,14 @@ export default function BottomTabs() {
     {
         icon:'today',
         text:'Calendrier',
-        color:"grey"
+        color:"grey",
+        screen: 'Calendar',
     },
     {
       icon: 'bookmark-outline',
       text: 'Travaux',
       color: 'grey',
-      screen: '', // Specify the screen to navigate to when this icon is pressed
+      screen: 'Booking', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'person-outline',

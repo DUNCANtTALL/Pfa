@@ -1,22 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions,ImageBackground } from 'react-native';
-import Colors from '../Utils/Colors';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Dimensions, ImageBackground } from 'react-native';
+import Colors from '../Utils/Colors';  // Ensure this path is correct
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 700 || height >= 1000;
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
     // Gestion des états des entrées utilisateur
-    const [username, setUsername] = useState('');
+    const [email, setUsername] = useState('');  // Consider renaming setUsername to setEmail for clarity
     const [password, setPassword] = useState('');
+    const navigation = useNavigation(); // Initialize navigation using the useNavigation hook
+
 
     // Fonction de gestion de l'appui sur le bouton de connexion
-    const handleSignIn = () => {
-        // Implémentez ici votre logique de connexion
-        navigation.navigate('homeUser');
-        console.log('Se connecter:', { username, password });
-    };
+    const handleSignIn = async () => {
+        try {
+            const response = await axios.post('http://192.168.1.3:5003/api/users/login', {
+                email,
+                password,
+            });
 
+            if (response.status === 200) {
+                console.log('Login successful:', response.data);
+                const { userId, role } = response.data;
+                await AsyncStorage.setItem('userId', userId); 
+
+                if (response.data.role === 'provider') {
+                    navigation.navigate('homeUser'); // Replace with the appropriate screen name
+                } else {
+                    navigation.navigate('homeClient'); // Replace with the appropriate screen name
+                }
+            } else {
+                console.error('Failed to log in:', response.data);
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
+    };
     // Fonction de gestion de l'appui sur le lien d'inscription
     const handleSignUp = () => {
         // Navigue vers RoleSelectionScreen
@@ -25,7 +48,7 @@ export default function LoginScreen({ navigation }) {
 
     return (
         <ImageBackground
-            source={require('../assets/login.png')}
+            source={require('../assets/login.png')}  // Ensure this path is correct
             style={styles.backgroundImage}
             resizeMode="cover"
         >
@@ -34,9 +57,9 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.titleText}>Login</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Username"
-                        value={username}
-                        onChangeText={setUsername}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setUsername}  // Consider renaming setUsername to setEmail for clarity
                     />
                     <TextInput
                         style={styles.input}
@@ -77,7 +100,6 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 60,
         borderTopLeftRadius: 60,
         backgroundColor: Colors.WHITE,
-        //opacity: 0.5, // Ajustez l'opacité si nécessaire
     },
     titleText: {
         fontSize: 24,

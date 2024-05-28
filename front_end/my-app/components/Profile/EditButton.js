@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Image, StyleSheet } from 'react-native';
-import {Ionicons} from 'react-native-vector-icons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const EditImageButton = ({ onPress }) => {
   return (

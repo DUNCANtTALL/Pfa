@@ -20,7 +20,7 @@ export default function BottomTabs() {
       icon: 'home',
       text: 'Home',
       color: Colors.PRIMARY,
-      screen: 'homeUser', // Specify the screen to navigate to when this icon is pressed
+      screen: 'homeClient', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'search',
@@ -32,13 +32,13 @@ export default function BottomTabs() {
       icon: 'bookmark-outline',
       text: 'Travaux',
       color: 'grey',
-      screen: '', // Specify the screen to navigate to when this icon is pressed
+      screen: 'BookingUser', // Specify the screen to navigate to when this icon is pressed
     },
     {
         icon: 'person-outline',
         text: 'Profile',
         color: 'grey',
-        screen: 'Profile', // Specify the screen to navigate to when this icon is pressed
+        screen: 'ServiceProfile', // Specify the screen to navigate to when this icon is pressed
     },
   ];
 
@@ -69,7 +69,5 @@ const styles = StyleSheet.create({
     margin: 10, 
     marginHorizontal: 30, 
     justifyContent: 'space-between',
-   
-
    }
   });
