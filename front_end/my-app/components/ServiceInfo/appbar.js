@@ -3,7 +3,6 @@ import { StyleSheet, Text, View ,Dimensions} from 'react-native';
 import {Ionicons} from 'react-native-vector-icons'
 import { Badge } from 'react-native-elements';
 
-
 export default function AppBar(){
     return (
           <View style={styles.appbar}>
@@ -40,7 +39,7 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       justifyContent:'space-between',
       margin:10,
-      paddingTop:10
+      paddingTop:20
     },
     rating:{
       backgroundColor: 'white', 

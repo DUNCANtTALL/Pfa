@@ -1,8 +1,7 @@
 
 import { StyleSheet, Text, View ,Dimensions} from 'react-native';
+import {Ionicons} from 'react-native-vector-icons'
 import { Badge } from 'react-native-elements';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
 
 export default function AppBar(){
     return (
@@ -30,10 +29,8 @@ export default function AppBar(){
       );
 }
 
-
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
-
 const styles = StyleSheet.create({
     appbar:{
       width: isDesktop ? '40%' : "95%",
@@ -42,7 +39,7 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       justifyContent:'space-between',
       margin:10,
-      paddingTop:10
+      paddingTop:20
     },
     rating:{
       backgroundColor: 'white', 

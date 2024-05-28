@@ -25,7 +25,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['client', 'service provider'],
+    enum: ['client', 'provider'],
     required: true,
   },
   bookings: [{
@@ -44,4 +44,4 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User ;
+module.exports =  User ;

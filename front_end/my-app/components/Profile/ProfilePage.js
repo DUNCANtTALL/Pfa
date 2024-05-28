@@ -21,7 +21,7 @@ export default function ProfilePage({ navigation }) {
                   <AppBar />
                   <Details />
                   {/* Ajout des boutons */}
-                  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MyBooking')}>
+                  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking')}>
                       <Text style={styles.buttonText}>My Booking</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ContactUs')}>
@@ -47,22 +47,21 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     profileContainer: {
-        backgroundColor: Colors.WHITE,
         flex: 1,
         paddingTop:15,
 
     },
     button: {
-    width: isDesktop ? '20%' : "50%",
-    padding: 15,
+    width: isDesktop ? '20%' : "45%",
+    padding: 12,
       backgroundColor: Colors.PRIMARY,
-      borderRadius: 15,
+      borderRadius: 99,
       alignItems: 'center',
       alignSelf:'center',
-      marginTop: 30,
+      marginTop: 25,
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: 17,
         color: Colors.WHITE,
     },
 });

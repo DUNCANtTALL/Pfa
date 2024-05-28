@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const { ZeroBounce } = require('zerobounce');
+
+const apiKey = '9a2af78c7f05497e808fa9ddc9d871ba';
+// const zeroBounce = new ZeroBounce(apiKey); // Initialize ZeroBounce with your API key
 
 
 
@@ -26,13 +30,17 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({ email });
 
-    if (!user) {
-      return res.status(401).send({ error: 'Invalid username or password' });
+    if (user && user.password === password) { // Simplified password check; use proper hashing in production
+      res.status(200).send({ 
+        message: 'Login successful',
+        userId: user._id,
+        role: user.role // Include the role in the response
+      });
+    } else {
+      res.status(401).send({ error: 'Invalid email or password' });
     }
-
-    res.status(200).send({ message: 'Login successful', user });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }

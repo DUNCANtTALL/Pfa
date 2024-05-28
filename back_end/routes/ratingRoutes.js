@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Rating } = require('../models/rating');
 
-// Get all ratings
+
 router.get('/', async (req, res) => {
   try {
     const ratings = await Rating.find();
