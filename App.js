@@ -15,6 +15,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Form from './components/formulaireUser/formulaire';
 import ProfilePage from './components/Profile/ProfilePage';
+import  BookingPage  from './components/Booking/BookingPage';
+import ServiceProfile from './components/ServiceInfo/ServicePage';
+import CalendarPage from './components/Calendar/CalendarPage';
+import homeClient from './components/Homepage/homeUser';
+import BookingUser from './components/BookingUser/BookingPage';
 
 const Stack = createNativeStackNavigator();
  
@@ -23,6 +28,7 @@ export default function App() {
   
   return (
   
+    
     <NavigationContainer>
             <Stack.Navigator initialRouteName="Welcome">
 
@@ -47,6 +53,10 @@ export default function App() {
                     component={Home} 
                     options={{ headerShown: false }} />
                     <Stack.Screen 
+                    name="homeClient" 
+                    component={homeClient} 
+                    options={{ headerShown: false }} />
+                    <Stack.Screen 
                     name="form" 
                     component={PageForm} 
                     options={{ headerShown: false }} />
@@ -54,9 +64,27 @@ export default function App() {
                     name="Profile" 
                     component={ProfilePage} 
                     options={{ headerShown: false }} />
+                    <Stack.Screen 
+                    name="Calendar" 
+                    component={CalendarPage} 
+                    options={{ headerShown: false }} />
+                    <Stack.Screen 
+                    name="Booking" 
+                    component={BookingPage} 
+                    options={{ headerShown: false }} />
+                    <Stack.Screen 
+                    name="BookingUser" 
+                    component={BookingUser} 
+                    options={{ headerShown: false }} />
+                    <Stack.Screen 
+                    name="ServiceProfile" 
+                    component={ServiceProfile} 
+                    options={{ headerShown: false }} />
+
 
             </Stack.Navigator>
         </NavigationContainer>
+
 
   );
 }

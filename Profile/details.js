@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet,Dimensions } from 'react-native';
-import {Ionicons} from 'react-native-vector-icons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import EditImageButton from './EditButton';
 import Colors from '../Utils/Colors';
 
@@ -38,12 +39,11 @@ const isDesktop = width >= 600 || height >= 1024;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: isDesktop ? '30%' : "90%",
+    width: isDesktop ? '30%' : "100%",
     alignItems: 'center',
     alignSelf:'center',
     backgroundColor:Colors.PRIMARY,
-    padding:20,
-    borderRadius:50,
+    padding:30,
     marginTop:10
   },
 
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor:Colors.WHITE,
     padding:8,
     borderRadius:10,
-    marginTop:6
+    marginTop:15
   },
   star :{
     flexDirection : 'row',

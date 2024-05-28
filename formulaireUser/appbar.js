@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
       flexDirection:'row',
       justifyContent:'space-between',
       margin:10,
-      paddingTop:10
+      paddingTop:20
     },
     rating:{
       backgroundColor: 'white', 

@@ -1,8 +1,9 @@
 // BottomTabs.js
 import React from 'react';
 import { View, Text, TouchableOpacity ,Dimensions} from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon, colors } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+
 import Colors from '../../components/Utils/Colors';
 
 const { width, height } = Dimensions.get('window');
@@ -16,26 +17,26 @@ export default function BottomTabs() {
       icon: 'home',
       text: 'Home',
       color: 'grey',
-      screen: 'homeClient', // Specify the screen to navigate to when this icon is pressed
+      screen: 'homeUser', // Specify the screen to navigate to when this icon is pressed
     },
     {
-      icon: 'search',
-      text: 'Trouver service',
-      color: Colors.PRIMARY,
-      
-      screen: 'form', // Specify the screen to navigate to when this icon is pressed
+        icon:'today',
+        text:'Calendar',
+        color: Colors.PRIMARY,
+        screen: 'Calendar', // Specify the screen to navigate to when this icon is pressed
+
     },
     {
       icon: 'bookmark-outline',
       text: 'Booking',
       color: 'grey',
-      screen: 'BookingUser', // Specify the screen to navigate to when this icon is pressed
+      screen: 'Booking', // Specify the screen to navigate to when this icon is pressed
     },
     {
-        icon: 'person-outline',
-        text: 'Profile',
-        color: 'grey',
-        screen: 'ServiceProfile', // Specify the screen to navigate to when this icon is pressed
+      icon: 'person-outline',
+      text: 'Profile',
+      color: 'grey',
+      screen: 'Profile', // Specify the screen to navigate to when this icon is pressed
     },
   ];
 
@@ -44,7 +45,7 @@ export default function BottomTabs() {
   };
 
   return (
-    <View style={{ flexDirection: 'row', margin: 10, marginHorizontal: 30, justifyContent: 'space-between',width: isDesktop ? '40%' : "90%", alignItems: 'center', alignSelf:'center' }}>
+    <View style={{ flexDirection: 'row', margin: 10, marginHorizontal: 30, justifyContent: 'space-between' ,width: isDesktop ? '40%' : "90%", alignItems: 'center', alignSelf:'center',}}>
       {icons.map((icon, i) => (
         <Icons key={i} {...icon} onPress={() => handleIconPress(icon.screen)} />
       ))}
