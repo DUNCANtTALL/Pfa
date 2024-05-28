@@ -32,7 +32,7 @@ export default function JobDetail({ booking, onApply }) {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.3:5003/api/bookings/apply', {
+      const response = await axios.post('http://192.168.100.17:5003/api/bookings/apply', {
         bookingId: booking._id,
         providerId: client,
       });

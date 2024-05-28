@@ -81,7 +81,7 @@ export default function BookingPage({ route, navigation }) {
                 <Text style={styles.bookingDetails}>Date: {item.date}</Text>
                 <Text style={styles.bookingDetails}>City: {item.city}</Text>
                 <Text style={styles.bookingDetails}>Price: {item.price}</Text>
-
+                <Text style={styles.bookingDetails}>Provider: {item.serviceProvider}</Text>
                 <Text style={styles.bookingDetails}>Status: {item.status}</Text>
         </View>
     )}
