@@ -7,6 +7,8 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const ratingRoutes = require('./routes/ratingRoutes');
 const notificationRoutes = require('./routes/notificationRoutes'); 
 const User = require('./models/User');
+const EventRoutes = require('./routes/EventRoutes');
+
 
 
 app.use(cors());
@@ -23,6 +25,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/ratings', ratingRoutes);
 app.use('/api/notifications', notificationRoutes); 
+app.use('/api/events', EventRoutes);
+
 
 
 
