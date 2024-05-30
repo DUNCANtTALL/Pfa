@@ -18,7 +18,7 @@ export default function LoginScreen() {
     // Fonction de gestion de l'appui sur le bouton de connexion
     const handleSignIn = async () => {
         try {
-            const response = await axios.post('http://192.168.1.3:5003/api/users/login', {
+            const response = await axios.post('http://192.168.100.17:5003/api/users/login', {
                 email,
                 password,
             });

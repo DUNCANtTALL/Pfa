@@ -22,7 +22,7 @@ export default function ProfilePage({ navigation }) {
                   <Details />
                   {/* Ajout des boutons */}
                   <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking')}>
-                      <Text style={styles.buttonText}>My Booking</Text>
+                      <Text style={styles.buttonText}>My Bookings</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ContactUs')}>
                       <Text style={styles.buttonText}>Contact Us</Text>

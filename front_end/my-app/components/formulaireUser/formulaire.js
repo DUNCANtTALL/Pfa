@@ -64,7 +64,7 @@ export default function Formulaire({ navigation }) {
     };
 
     try {
-      const response = await axios.post('http://192.168.1.3:5003/api/bookings/Add', formData);
+      const response = await axios.post('http://192.168.100.17:5003/api/bookings/Add', formData);
 
       if (response.status === 201) {
         Alert.alert('Success', 'Form submitted successfully');
@@ -81,26 +81,26 @@ export default function Formulaire({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Service</Text>
-      <View style={styles.inputContainer}>
-        <Picker
-          selectedValue={service}
-          onValueChange={(itemValue) => setService(itemValue)}
-          style={styles.input}
-        >
-          <Picker.Item label="Select a service" value="" />
-          {services.map((service, index) => (
-            <Picker.Item key={index} label={service} value={service} />
-          ))}
-        </Picker>
-      </View>
-
-      <Text style={styles.label}>Category</Text>
       <TextInput
         style={styles.input}
-        value={category}
-        onChangeText={setCategory}
-        placeholder="Enter the category"
+        value={service}
+        onChangeText={setService}
+        placeholder="Enter your service"
       />
+
+      <Text style={styles.label}>Category</Text>
+      <View style={styles.inputContainer}>
+        <Picker
+            selectedValue={category}
+            onValueChange={(itemValue) => setCategory(itemValue)}
+            style={styles.input}
+          >
+            <Picker.Item label="Select a Category" value="" />
+            {services.map((service, index) => (
+              <Picker.Item key={index} label={service} value={service} />
+            ))}
+          </Picker>
+        </View>
 
       <Text style={styles.label}>Price</Text>
       <TextInput
