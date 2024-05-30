@@ -1,32 +1,39 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import axios from 'axios'; // Import Axios for making HTTP requests
+import axios from 'axios';
 
-const RatingComponent = ({ provider }) => {
+const RatingComponent = ({ booking }) => {
   const [rating, setRating] = useState(0);
 
-  const handleRating = async (rate) => {
+  const handleRating = (rate) => {
     setRating(rate);
+  };
+
+  const submitRating = async () => {
+    if (rating === 0) {
+      Alert.alert('Please select a rating before submitting.');
+      return;
+    }
 
     try {
       // Send rating to the backend
-      const response = await axios.post('http://your-backend-url/ratings', {
-        providerId: providerId,
-        rating: rate,
+      const response = await axios.post('http://192.168.100.17:5003/api/ratings/Add', {
+        ratedUser: booking.serviceProvider,
+        rating: rating,
       });
       console.log('Rating submitted successfully:', response.data);
-      // You can handle success or show a message to the user
+      Alert.alert('Rating submitted successfully.');
     } catch (error) {
       console.error('Error submitting rating:', error);
-      // Handle error, such as showing an error message to the user
+      Alert.alert('Error submitting rating. Please try again.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Rate the Service of </Text>
-      <Text style={styles.title}>JOE</Text>
+      <Text style={styles.title}>Rate the Service of</Text>
+      <Text style={styles.title}>{booking.providerName || 'Provider'}</Text>
 
       <View style={styles.stars}>
         {[1, 2, 3, 4, 5].map((star) => (
@@ -39,6 +46,10 @@ const RatingComponent = ({ provider }) => {
           </TouchableOpacity>
         ))}
       </View>
+      
+      <TouchableOpacity style={styles.submitButton} onPress={submitRating}>
+        <Text style={styles.submitButtonText}>Submit Rating</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -48,6 +59,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    elevation: 5,
   },
   title: {
     fontSize: 24,
@@ -55,6 +69,16 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: 'row',
+    marginBottom: 20,
+  },
+  submitButton: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 18,
   },
 });
 

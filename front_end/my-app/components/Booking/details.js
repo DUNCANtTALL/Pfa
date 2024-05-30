@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import axios from 'axios';
+import Colors from '../Utils/Colors';
 
 export default function Details({ booking }) {
     const [user, setUser] = useState(null);
@@ -8,25 +9,45 @@ export default function Details({ booking }) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`http://192.168.100.17:5003/api/users/getByID/${booking.client}`);
+                const response = await axios.get(`http://192.168.1.3:5003/api/users/getByID/${booking.client}`);
                 setUser(response.data);
             } catch (error) {
                 console.error('Error fetching user details:', error);
             }
         };
         fetchUser();
-    }, [booking.userId]);
+    }, [booking.client]);
+
+    const groupDetailsInPairs = (details) => {
+        const groupedDetails = [];
+        for (let i = 0; i < details.length; i += 2) {
+            groupedDetails.push(details.slice(i, i + 2));
+        }
+        return groupedDetails;
+    };
+
+    const bookingDetails = [
+        { label: 'Service', value: booking.service },
+        { label: 'City', value: booking.city },
+        { label: 'Category', value: booking.category },
+        { label: 'Price', value: booking.price },
+        { label: 'Status', value: booking.status },
+    ];
 
     return (
         <View style={styles.container}>
-            <Text style={styles.jobTitle}>{booking.title}</Text>
             <View style={styles.infoContainer}>
-                {user && <Text style={styles.infoText}>Client Name: {user.name}</Text>}
-                <Text style={styles.infoText}>Service: {booking.service}</Text>
-                <Text style={styles.infoText}>City: {booking.city}</Text>
-                <Text style={styles.infoText}>Category: {booking.category}</Text>
-                <Text style={styles.infoText}>Price: {booking.price}</Text>
-                <Text style={styles.infoText}>Status: {booking.status}</Text>
+                {user && <Text style={styles.jobTitle}>{user.name}</Text>}
+                {groupDetailsInPairs(bookingDetails).map((pair, index) => (
+                    <View key={index} style={styles.row}>
+                        {pair.map((detail, idx) => (
+                            <View key={idx} style={styles.infoBox}>
+                                <Text style={styles.infoLabel}>{detail.label}:</Text>
+                                <Text style={styles.infoText}>{detail.value}</Text>
+                            </View>
+                        ))}
+                    </View>
+                ))}
             </View>
         </View>
     );
@@ -37,24 +58,57 @@ const isDesktop = width >= 600 || height >= 1024;
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
-        marginVertical: 10,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#eaeaea',
+        flex: 1,
+        marginTop:5
     },
+
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginLeft:5
+
+    },
+
     jobTitle: {
-        fontSize: 18,
+        fontSize: 19,
+        textTransform: 'uppercase',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.BLACK,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 15,
+        color: Colors.BLACK,
     },
+
     infoContainer: {
-        marginTop: 10,
+        flex: 1,
+        backgroundColor: Colors.Grey,
+        borderColor: Colors.BLACK,
+        borderRadius: 25,
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginRight: 15,
+        marginLeft: 15,
+        marginBottom: 8,
+        borderRadius: 25,
+        borderWidth:2,
     },
+
+    infoBox: {
+        flex: 1,
+    },
+
+    infoLabel: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: Colors.BLACK,
+        
+    },
+
     infoText: {
-        fontSize: 16,
+        fontSize: 14,
         marginBottom: 5,
+        color: '#555',
     },
-    
 });

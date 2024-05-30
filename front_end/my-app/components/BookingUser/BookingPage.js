@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, ScrollView, StyleSheet, Dimensions, FlatList,TouchableOpacity,Alert } from 'react-native';
+import { SafeAreaView, View, Text, Modal, StyleSheet, Dimensions, FlatList, TouchableOpacity, Alert } from 'react-native';
 import AppBar from './appbar';
+import { Divider } from 'react-native-elements';
 import BottomTabs from './bottom_tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import RatingPage from '../Rating/Rating';
+
+import Colors from '../Utils/Colors';
 
 export default function BookingPage({ route, navigation }) {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState(null);
     const [bookings, setBookings] = useState([]);
     const [client, setClient] = useState(null);
+    const [providers, setProviders] = useState({});
+
     const handleDeleteBooking = async (id) => {
         Alert.alert(
             'Confirmation',
@@ -21,7 +30,7 @@ export default function BookingPage({ route, navigation }) {
                     text: 'Yes',
                     onPress: async () => {
                         try {
-                            await axios.delete(`http://192.168.1.3:5003/api/bookings/Delete/${id}`);
+                            await axios.delete(`http://192.168.100.17:5003/api/bookings/Delete/${id}`);
                             setBookings(bookings.filter((booking) => booking._id !== id));
                         } catch (error) {
                             console.error('Error deleting booking:', error);
@@ -33,6 +42,18 @@ export default function BookingPage({ route, navigation }) {
         );
     };
 
+    const handleCompleteBooking = async (booking) => {
+        try {
+            await axios.put(`http://192.168.100.17:5003/api/bookings/Complete/${booking._id}`);
+            setBookings(bookings.map((b) =>
+                b._id === booking._id ? { ...b, status: 'Completed' } : b
+            ));
+            setSelectedBooking({ ...booking, status: 'Completed' });
+            setModalVisible(true);
+        } catch (error) {
+            console.error('Error completing booking:', error);
+        }
+    };
 
     useEffect(() => {
         const getClientId = async () => {
@@ -49,46 +70,136 @@ export default function BookingPage({ route, navigation }) {
 
     useEffect(() => {
         const fetchBookings = async () => {
-            try {
-                const response = await axios.get(`http://192.168.100.17:5003/api/bookings/bookings/user/${client}`);
-                setBookings(response.data);
-            } catch (error) {
-                console.error('Error fetching bookings:', error);
+            if (client) {
+                try {
+                    const response = await axios.get(`http://192.168.100.17:5003/api/bookings/bookings/user/${client}`);
+                    setBookings(response.data);
+                } catch (error) {
+                    console.error('Error fetching bookings:', error);
+                }
             }
         };
 
         fetchBookings();
     }, [client]);
 
+    useEffect(() => {
+        const fetchProviders = async () => {
+            const providerIds = bookings.map(booking => booking.serviceProvider);
+            const uniqueProviderIds = [...new Set(providerIds)];
+
+            const fetchedProviders = {};
+            for (const id of uniqueProviderIds) {
+                try {
+                    const response = await axios.get(`http://192.168.100.17:5003/api/users/getByID/${id}`);
+                    fetchedProviders[id] = response.data;
+                } catch (error) {
+                    console.error('Error fetching provider:', error);
+                }
+            }
+
+            setProviders(fetchedProviders);
+        };
+
+        if (bookings.length > 0) {
+            fetchProviders();
+        }
+    }, [bookings]);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const groupBookingsInPairs = (bookings) => {
+        const groupedBookings = [];
+        for (let i = 0; i < bookings.length; i += 2) {
+            groupedBookings.push(bookings.slice(i, i + 2));
+        }
+        return groupedBookings;
+    };
+
+    const getStatusStyle = (status) => {
+        return {
+            ...styles.statusBox,
+            backgroundColor: status === 'confirmed' ? 'green' : status === 'pending' ? 'red' : 'gray'
+        };
+    };
+
+    const toggleModal = (booking) => {
+        setSelectedBooking(booking);
+        setModalVisible(!modalVisible);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <AppBar />
+            <Divider width={1} />
             <View style={styles.content}>
                 <Text style={styles.title}>Your Bookings</Text>
+                <Divider width={1} />
                 {bookings.length === 0 ? (
                     <Text style={styles.noBookingText}>No bookings found.</Text>
                 ) : (
                     <FlatList
-                data={bookings}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                    <View style={styles.booking}>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteBooking(item._id)}>
-                    <Text style={styles.deleteButtonText}>X</Text>
-                </TouchableOpacity>
-                <Text style={styles.bookingTitle}>{item.service}</Text>
-                <Text style={styles.bookingDetails}>Category: {item.category}</Text>
-                <Text style={styles.bookingDetails}>Date: {item.date}</Text>
-                <Text style={styles.bookingDetails}>City: {item.city}</Text>
-                <Text style={styles.bookingDetails}>Price: {item.price}</Text>
-                <Text style={styles.bookingDetails}>Provider: {item.serviceProvider}</Text>
-                <Text style={styles.bookingDetails}>Status: {item.status}</Text>
-        </View>
-    )}
-/>
+                        style={styles.FlatList}
+                        data={groupBookingsInPairs(bookings)}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <View style={styles.bookingRow}>
+                                {item.map((booking) => (
+                                    <View style={styles.booking} key={booking._id}>
+                                        <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteBooking(booking._id)}>
+                                            <Icon name="trash" size={20} color="#fff" />
+                                        </TouchableOpacity>
+                                        <Text style={styles.bookingTitle}>{booking.service}</Text>
+                                        <Text style={styles.bookingDetails}>Category: {booking.category}</Text>
+                                        <Text style={styles.bookingDetails}>Date: {formatDate(booking.date)}</Text>
+                                        <Text style={styles.bookingDetails}>City: {booking.city}</Text>
+                                        <Text style={styles.bookingDetails}>Price: {booking.price}</Text>
+                                        <Text style={styles.bookingDetails}>Provider: {providers[booking.serviceProvider]?.name || 'N/A'}</Text>
+                                        <View style={getStatusStyle(booking.status)}>
+                                            <Text style={styles.statusText}>{booking.status}</Text>
+                                        </View>
+                                        {booking.status === 'confirmed' && (
+                                            <TouchableOpacity
+                                                style={styles.completeButton}
+                                                onPress={() => toggleModal(booking)}
+                                            >
+                                                <Text style={styles.completeButtonText}>Complete</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                       
+                                    </View>
+                                ))}
+                            </View>
+                        )}
+                    />
                 )}
             </View>
-            <BottomTabs/>
+            {/* Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={toggleModal}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity onPress={toggleModal}>
+                            <Text style={{ color: 'blue', marginBottom: 10 }}>Close</Text>
+                        </TouchableOpacity>
+                        {selectedBooking && (
+                            <RatingPage booking={selectedBooking} />
+                        )}
+                    </View>
+                </View>
+            </Modal>
+            <Divider width={1} />
+            <BottomTabs />
         </SafeAreaView>
     );
 }
@@ -102,49 +213,112 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 20,
+        backgroundColor: Colors.PRIMARY,
+    },
+    FlatList: {
+        display: 'flex',
+        flexDirection: 'column',
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    noBookingText: {
-        fontSize: 18,
-        textAlign: 'center',
-    },
-    booking: {
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 10,
-        padding: 15,
-        backgroundColor: '#fff',
-        elevation: 3,
-    },
-    bookingTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 5,
+        color: Colors.WHITE,
+        backgroundColor: Colors.PRIMARY,
+        padding: 12,
+    },
+    noBookingText: {
+        fontSize: 19,
+        textAlign: 'center',
+        color: '#888',
+    },
+    bookingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    booking: {
+        flex: 1,
+        margin: 5,
+        borderWidth: 1,
+        borderColor: Colors.BLACK,
+        borderRadius: 25,
+        padding: 22,
+        backgroundColor: Colors.GREY,
+        justifyContent: 'space-between',
+    },
+    bookingTitle: {
+        fontSize: 19,
+        textTransform: 'uppercase',
+        paddingBottom: 5,
+        borderBottomWidth: 1,
+        borderBlockColor: Colors.PRIMARY,
+        fontWeight: 'bold',
+        marginBottom: 9,
+        color: Colors.BLACK,
     },
     bookingDetails: {
-        fontSize: 16,
-        marginBottom: 3,
-    },deleteButton: {
+        fontSize: 13,
+        marginBottom: 5,
+        color: '#555',
+    },
+    deleteButton: {
         position: 'absolute',
-        top: 5,
-        right: 5,
-        backgroundColor: 'red',
+        top: 15,
+        right: 20,
+        backgroundColor: Colors.PRIMARY,
         borderRadius: 15,
         width: 30,
         height: 30,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    deleteButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 16,
+    statusBox: {
+        padding: 5,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5,
     },
-    
+    statusText: {
+        color: Colors.WHITE,
+        fontWeight: 'bold',
+    },
+    completeButton: {
+        marginTop: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        backgroundColor: 'green',
+        borderRadius: 5,
+        alignItems: 'center',
+        alignSelf: 'flex-end',
+    },
+    completeButtonText: {
+        color: Colors.WHITE,
+        fontWeight: 'bold',
+    },
+    ratingButton: {
+        marginTop: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        backgroundColor: 'blue',
+        borderRadius: 5,
+        alignItems: 'center',
+        alignSelf: 'flex-end',
+    },
+    ratingButtonText: {
+        color: Colors.WHITE,
+        fontWeight: 'bold',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        elevation: 5,
+    },
 });

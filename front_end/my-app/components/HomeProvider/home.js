@@ -54,9 +54,8 @@ export default function Home({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <AppBar />
-      <View style={styles.container}>
-        <Divider width={1} />
       <Divider width={1} />
+      <View style={styles.container}>
         <View style={styles.searchContainer}>
           <Text style={styles.searchLabel}>Search by:</Text>
           <Picker
@@ -83,10 +82,10 @@ export default function Home({ navigation }) {
             name='search'
             type='ionicon'
             color={Colors.PRIMARY}
-            size={24}
+            size={25}
             onPress={handleSearch}
             containerStyle={styles.input}
-            leftIcon={<Icon name='location-outline' type='ionicon' color={Colors.PRIMARY} size={15} marginRight={5} />}
+            leftIcon={<Icon name='location-outline' type='ionicon' color={Colors.PRIMARY} marginRight={15} />}
             placeholder={`Enter ${searchMethod === 'city' ? 'city' : 'category'}...`}
             placeholderTextColor={Colors.BLACK}
             value={searchInput}
@@ -94,6 +93,7 @@ export default function Home({ navigation }) {
             onPressIn={handleSearch}
           />
         </View>
+        <Divider width={1} />
         <ScrollView>
           {bookings.map((booking) => (
             <JobDetail key={booking._id} booking={booking} onApply={handleApply} />
@@ -102,7 +102,6 @@ export default function Home({ navigation }) {
         <Divider width={1} />
         <BottomTabs />
       </View>
-
     </SafeAreaView>
   );
 }
@@ -110,41 +109,46 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    
   },
   container: {
     flex: 1,
     marginTop: 0,
-    paddingLeft: 12,
-    paddingRight: 12,
+    margin:5
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 25,
-    marginTop: 0,
+    marginHorizontal: 80,
   },
   searchLabel: {
     marginRight: 10,
+    
   },
   picker: {
     height: 50,
     width: 150,
   },
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  pickerInput: {
-    flex: 1,
-    height: 50,
-  },
-  input: {
-    flex: 1,
     borderRadius: 99,
     borderWidth: 2,
     borderColor: Colors.PRIMARY,
-    height: '72%',
-    padding: 0,
+    marginLeft: 50,
+    marginRight: 50,
+    marginBottom:5
+  },
+
+  pickerInput: {
+    flex: 1,
+    height: 50,
+    
+  },
+  input: {
+    flex: 1,
+    height: '60%',
   },
 });

@@ -4,13 +4,17 @@ import { Divider } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import RatingPage from '../Rating/Rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 export default function JobDetail() {
     const [modalVisible, setModalVisible] = useState(false);
     const [client, setClient] = useState(null);
     const [providers, setProviders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [ratings, setRatings] = useState({});
+
     const [bookings, setBookings] = useState([]);
+    const navigation = useNavigation();
 
     useEffect(() => {
         const getClientId = async () => {
@@ -55,18 +59,55 @@ export default function JobDetail() {
             try {
                 const response = await fetch(`http://192.168.100.17:5003/api/bookings/GetProviderByID/${providerId}`);
                 const data = await response.json();
-                // Handle the fetched applied bookings data
-                console.log(data);
                 setBookings(data);
-
             } catch (error) {
                 console.error('Error fetching applied bookings:', error);
             }
         };
 
-        // Fetch applied bookings for each provider
         providers.forEach(provider => fetchAppliedBookings(provider._id));
     }, [providers]);
+
+    useEffect(() => {
+        const fetchRatings = async (providerId) => {
+            try {
+                const response = await fetch(`http://192.168.100.17:5003/api/ratings/Avg/${providerId}`);
+                const data = await response.json();
+                setRatings(prevState => ({ ...prevState, [providerId]: data.averageRating }));
+            } catch (error) {
+                console.error('Error fetching ratings:', error);
+            }
+        };
+
+        providers.forEach(provider => fetchRatings(provider._id));
+    }, [providers]);
+
+    const handleAccept = async (providerId, bookingId) => {
+        try {
+            const response = await fetch(`http://192.168.100.17:5003/api/bookings/assignProvider`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    providerId,
+                    bookingId,
+                }),
+            });
+
+            if (response.ok) {
+                const updatedBookings = bookings.map(booking =>
+                    booking._id === bookingId ? { ...booking, providerId, status: 'Assigned' } : booking
+                );
+                setBookings(updatedBookings);
+                navigation.navigate('BookingUser');
+            } else {
+                console.error('Failed to assign provider');
+            }
+        } catch (error) {
+            console.error('Error assigning provider:', error);
+        }
+    };
 
     if (loading) {
         return (
@@ -89,48 +130,39 @@ export default function JobDetail() {
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                                         <Ionicons name='star' color='#F99A0E' size={20} />
                                         <View style={{ width: 5 }} />
-                                        <Text>{provider.averageRating}</Text>
+                                        <Text>{ratings[provider._id]}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 7 }}>
-                                    <Text>{provider.email}</Text>                                    
-                                    {/* Display the booking information */}
-                            {bookings.map(booking => (
-                                    // Inside the return statement of your component
+                                    <Text>{provider.email}</Text>
+                                </View>
 
-                            <View >
-                                <View style={styles.bookingInfo}>
-                                    <Text>Date: {booking.date}</Text>
-                                </View>
-                                <View style={styles.bookingInfo}>
-                                    <Text>Category: {booking.category}</Text>
-                                </View>
-                                <View style={styles.bookingInfo}>
-                                    <Text>Name: {booking.name}</Text>
-                                </View>
-                            </View>
-
+                                {bookings.map(booking => (
+                                    <View key={booking._id}>
+                                        <View style={styles.bookingInfo}>
+                                            <Text>Date: {booking.date}</Text>
+                                        </View>
+                                        <View style={styles.bookingInfo}>
+                                            <Text>Category: {booking.category}</Text>
+                                        </View>
+                                        <View style={styles.bookingInfo}>
+                                            <Text>Name: {booking.name}</Text>
+                                        </View>
+                                        <TouchableOpacity
+                                            style={{ backgroundColor: '#529A69', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 4 }}
+                                            onPress={() => handleAccept(provider._id, booking._id)}
+                                        >
+                                            <Text style={{ color: 'white' }}>Accepter</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 ))}
-                                </View>
-                                
                             </View>
                         </View>
                     </TouchableOpacity>
                     <Divider width={1} color='#CACACA' />
-                    <View>
-                        <Text style={{ padding: 5 }}></Text>
-                        <TouchableOpacity
-                            style={{ backgroundColor: '#529A69', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 4 }}
-                            onPress={() => fetchAppliedBookings(provider._id)}
-                        >
-                            
-                            <Text style={{ color: 'white' }}>Accepter</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
             ))}
 
-            {/* Modal */}
             <Modal
                 animationType="slide"
                 transparent={true}
