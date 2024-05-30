@@ -81,26 +81,26 @@ export default function Formulaire({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Service</Text>
-      <View style={styles.inputContainer}>
-        <Picker
-          selectedValue={service}
-          onValueChange={(itemValue) => setService(itemValue)}
-          style={styles.input}
-        >
-          <Picker.Item label="Select a service" value="" />
-          {services.map((service, index) => (
-            <Picker.Item key={index} label={service} value={service} />
-          ))}
-        </Picker>
-      </View>
-
-      <Text style={styles.label}>Category</Text>
       <TextInput
         style={styles.input}
-        value={category}
-        onChangeText={setCategory}
-        placeholder="Enter the category"
+        value={service}
+        onChangeText={setService}
+        placeholder="Enter your service"
       />
+
+      <Text style={styles.label}>Category</Text>
+      <View style={styles.inputContainer}>
+        <Picker
+            selectedValue={category}
+            onValueChange={(itemValue) => setCategory(itemValue)}
+            style={styles.input}
+          >
+            <Picker.Item label="Select a Category" value="" />
+            {services.map((service, index) => (
+              <Picker.Item key={index} label={service} value={service} />
+            ))}
+          </Picker>
+        </View>
 
       <Text style={styles.label}>Price</Text>
       <TextInput

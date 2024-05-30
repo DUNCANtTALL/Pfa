@@ -5,30 +5,29 @@ import BottomTabs from './bottom_tabs';
 import Details from './details';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-
-
+import Colors from '../Utils/Colors';
+import { Divider } from 'react-native-elements';
 
 export default function BookingPage({ route, navigation }) {
     const [bookings, setBookings] = useState([]);
     const [client, setClient] = useState(null);
+
     useEffect(() => {
         const getClientId = async () => {
-          try {
-            const storedClientId = await AsyncStorage.getItem('userId');
-            if (storedClientId) {
-              setClient(storedClientId);
-            } else {
-              console.error('Client ID not found in AsyncStorage');
+            try {
+                const storedClientId = await AsyncStorage.getItem('userId');
+                if (storedClientId) {
+                    setClient(storedClientId);
+                } else {
+                    console.error('Client ID not found in AsyncStorage');
+                }
+            } catch (error) {
+                console.error('Error fetching client ID from AsyncStorage:', error);
             }
-          } catch (error) {
-            console.error('Error fetching client ID from AsyncStorage:', error);
-          }
         };
-    
         getClientId();
-      }, []);
+    }, []);
 
-    // Simulating the retrieval of bookings from AsyncStorage or other storage
     useEffect(() => {
         const fetchAppliedBookings = async () => {
           try {
@@ -38,21 +37,23 @@ export default function BookingPage({ route, navigation }) {
             console.error('Error fetching applied bookings:', error);
           }
         };
-      
         fetchAppliedBookings();
-      }, []);
+    }, [client]);
 
     return (
         <SafeAreaView style={styles.container}>
             <AppBar />
+            <Divider width={1} />
             <View style={styles.content}>
                 <Text style={styles.title}>Saved Jobs</Text>
+                <Divider width={1} />
                 <ScrollView>
                     {bookings.map((booking, index) => (
                         <Details key={index} booking={booking} />
                     ))}
                 </ScrollView>
             </View>
+            <Divider width={1} />
             <BottomTabs />
         </SafeAreaView>
     );
@@ -67,11 +68,12 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 20,
+        backgroundColor:Colors.PRIMARY
     },
     title: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 10,
+        color: Colors.WHITE,
+        padding: 12,
     },
 });

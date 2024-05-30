@@ -61,12 +61,12 @@ export default function JobDetail({ booking, onApply }) {
         </View>
       </View>
       <Divider width={1} color='#CACACA' />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
-        <View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding:5 }}>
+        <View style={styles.containerCategory}>
           <Text style={styles.category}>Category</Text>
           <Text style={styles.categoryText}>{booking.category}</Text>
         </View>
-        <View>
+        <View style={styles.containerPrice}>
           <Text style={styles.price}>Proposed Price</Text>
           <Text style={styles.priceText}>{booking.price} DH</Text>
         </View>
@@ -84,63 +84,94 @@ export default function JobDetail({ booking, onApply }) {
 
 const styles = StyleSheet.create({
   container: {
-    borderTopWidth:2,
+    borderTopWidth:3,
     marginTop:2,
     borderBlockColor: Colors.PRIMARY,
+    paddingLeft: 12,
+    paddingRight: 12,
+    paddingTop:15,
+    paddingBottom:15,
     borderRadius: 10,
-    padding: 2,
-    marginTop:10,
-    borderRadius: 10,
-
+    height:'auto',
+    width:'auto'
   },
+
   header: {
     flexDirection: 'row',
-    padding: 10,
+    padding: 5,
   },
+
   image: {
-    width: 50,
-    height: 50,
+    width: 52,
+    height: 52,
     borderRadius: 7,
   },
+
   content: {
     marginLeft: 10,
   },
+
   serviceName: {
     fontSize: 18,
     fontWeight: 'bold',
   },
+
   details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 7,
+    padding: 5,
+    alignSelf:'flex-start'
   },
+
+  containerCategory:{
+    width:'43%',
+    height:'auto',
+    alignSelf:'flex-start'
+  },
+
+  containerPrice:{
+    width:'30%',
+    height:'auto',
+    alignSelf:'flex-start'
+  },
+
   category: {
     color: 'grey',
-    padding: 5,
+    padding:2,
+    alignSelf:'flex-start'
   },
+
   categoryText: {
     backgroundColor: '#FEEAE6',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    padding:8,
     color: Colors.Red,
+    alignSelf:'flex-start'
   },
+
   price: {
     color: 'grey',
-    padding: 5,
+    padding:2,
+    alignSelf:'flex-start'
+
   },
+
   priceText: {
     backgroundColor: '#D2F8E7',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    padding:8,
     color: Colors.Green,
+    alignSelf:'flex-start'
   },
+
+
   applyButton: {
     backgroundColor: Colors.PRIMARY,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 4,
+    padding:8,
+    borderRadius: 20,
+
   },
+
   applyButtonText: {
     color: 'white',
   },
+  
 });
