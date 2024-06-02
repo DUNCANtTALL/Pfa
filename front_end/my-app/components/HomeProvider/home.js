@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, View, Text, ScrollView, StyleSheet} from 'react-native';
 import { Divider, Input, Icon } from 'react-native-elements';
 import AppBar from '../HomeProvider/appbar';
@@ -53,9 +54,11 @@ export default function Home({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <AppBar />
-      <Divider width={1} />
+      <StatusBar style="auto" />
+
       <View style={styles.container}>
+      <AppBar />
+      <Divider width={2} />
         <View style={styles.searchContainer}>
           <Text style={styles.searchLabel}>Search by:</Text>
           <Picker
@@ -99,7 +102,7 @@ export default function Home({ navigation }) {
             <JobDetail key={booking._id} booking={booking} onApply={handleApply} />
           ))}
         </ScrollView>
-        <Divider width={1} />
+        <Divider width={2} />
         <BottomTabs />
       </View>
     </SafeAreaView>
@@ -113,19 +116,20 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 0,
-    margin:5
+    paddingTop:30
   },
+  
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginHorizontal: 80,
+    
   },
   searchLabel: {
     marginRight: 10,
-    
   },
+
   picker: {
     height: 50,
     width: 150,

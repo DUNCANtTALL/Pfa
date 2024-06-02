@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, Modal, StyleSheet, ActivityIndicator } from 'react-native';
-import { Divider } from 'react-native-elements';
+import { View, Text, TouchableOpacity, Image, Modal, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import RatingPage from '../Rating/Rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import Colors from '../Utils/Colors';
 
 export default function JobDetail() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -12,7 +12,6 @@ export default function JobDetail() {
     const [providers, setProviders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [ratings, setRatings] = useState({});
-
     const [bookings, setBookings] = useState([]);
     const navigation = useNavigation();
 
@@ -39,7 +38,6 @@ export default function JobDetail() {
             try {
                 const response = await fetch(`http://192.168.100.17:5003/api/bookings/user/${client}/providers`);
                 const data = await response.json();
-
                 setProviders(data);
             } catch (error) {
                 console.error('Error fetching providers:', error);
@@ -109,6 +107,18 @@ export default function JobDetail() {
         }
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleProviderInfoPress = (provider) => {
+        navigation.navigate('ServiceProfile', { provider });
+    };
+
     if (loading) {
         return (
             <View style={styles.loaderContainer}>
@@ -118,51 +128,60 @@ export default function JobDetail() {
     }
 
     return (
-        <View style={{ borderWidth: 1, borderColor: '#CACACA', margin: 12, borderRadius: 10 }}>
+        <View style={styles.container}>
             {providers.map(provider => (
                 <View key={provider._id}>
-                    <TouchableOpacity onPress={toggleModal}>
-                        <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <Image source={require('../assets/painter.jpg')} style={{ width: 50, height: 50, borderRadius: 7 }} />
-                            <View style={{ marginLeft: 10 }}>
-                                <Text style={{ paddingHorizontal: 10, fontSize: 18, fontWeight: 'bold' }}>{provider.name}</Text>
-                                <View style={{ paddingLeft: 200 }}>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Ionicons name='star' color='#F99A0E' size={20} />
-                                        <View style={{ width: 5 }} />
-                                        <Text>{ratings[provider._id]}</Text>
-                                    </View>
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 7 }}>
-                                    <Text>{provider.email}</Text>
+                    <View onPress={toggleModal}>
+                        <View style={styles.providerContainer}>
+                            <TouchableOpacity style={styles.providerInfo} onPress={() => handleProviderInfoPress(provider)}>
+                                <Image source={require('../assets/painter.jpg')} style={styles.providerImage} />
+
+                                <View>
+                                    <Text style={styles.providerName}>{provider.name}</Text>
+                                    <Text style={styles.providerEmail}>{provider.email}</Text>
                                 </View>
 
+                                <View style={styles.ratingContainer}>
+
+                                        <Ionicons name='star' color='#F99A0E' size={20} padding={5} backgroundColor={Colors.LIGHT_GREY} />
+                                        <View style={styles.ratingSpacer}></View>
+                                        <Text backgroundColor={Colors.LIGHT_GREY} padding={5}>{ratings[provider._id]} </Text>
+
+                                </View>
+                            </TouchableOpacity>
+
+                            <ScrollView style={styles.bookingRow} horizontal>
                                 {bookings.map(booking => (
-                                    <View key={booking._id}>
-                                        <View style={styles.bookingInfo}>
-                                            <Text>Date: {booking.date}</Text>
+                                    <View key={booking._id} style={styles.bookingContainer}>
+
+                                        <View style={styles.ContainerInfo}>
+                                            <Text style={styles.titleContainer}>Date</Text>
+                                            <Text style={styles.bookingInfo}>{formatDate(booking.date)}</Text>
                                         </View>
-                                        <View style={styles.bookingInfo}>
-                                            <Text>Category: {booking.category}</Text>
+
+                                        <View style={styles.ContainerInfo}>
+                                            <Text style={styles.titleContainer}>Category</Text>
+                                            <Text style={styles.bookingInfo}>{booking.category}</Text>
                                         </View>
-                                        <View style={styles.bookingInfo}>
-                                            <Text>Name: {booking.name}</Text>
+
+                                        <View style={styles.ContainerInfo}>
+                                            <Text style={styles.titleContainer}>Name</Text>
+                                            <Text style={styles.bookingInfo}>{booking.name}</Text>
                                         </View>
+
                                         <TouchableOpacity
-                                            style={{ backgroundColor: '#529A69', paddingHorizontal: 10, paddingVertical: 7, borderRadius: 4 }}
+                                            style={styles.acceptButton}
                                             onPress={() => handleAccept(provider._id, booking._id)}
                                         >
-                                            <Text style={{ color: 'white' }}>Accepter</Text>
+                                            <Text style={styles.acceptButtonText}>Accepter</Text>
                                         </TouchableOpacity>
                                     </View>
                                 ))}
-                            </View>
+                            </ScrollView>
                         </View>
-                    </TouchableOpacity>
-                    <Divider width={1} color='#CACACA' />
+                    </View>
                 </View>
             ))}
-
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -173,7 +192,7 @@ export default function JobDetail() {
                     <View style={styles.modalContent}>
                         <TouchableOpacity onPress={toggleModal}>
                             <RatingPage />
-                            <Text style={{ color: 'blue', marginTop: 10 }}>Close</Text>
+                            <Text style={styles.closeText}>Close</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -183,16 +202,106 @@ export default function JobDetail() {
 }
 
 const styles = StyleSheet.create({
-    loaderContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    container: {
+        marginTop: 2,
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 15,
+        paddingBottom: 15,
+        borderRadius: 10,
+        height: 'auto',
+        maxWidth: '100%',
     },
+    providerContainer: {
+        flexDirection: 'column',
+        padding: 5,
+    },
+    providerImage: {
+        width: 52,
+        height: 52,
+        borderRadius: 7,
+    },
+    providerInfo: {
+        flexDirection: 'row',
+        marginLeft: 10,
+    },
+    providerName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginLeft: 10,
+        marginBottom: 5,
+
+    },
+    providerEmail: {
+        fontSize: 15,
+        marginLeft: 15,
+        padding:5,
+        backgroundColor:Colors.LIGHT_GREY,
+
+    },
+    ratingContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignSelf: 'flex-start',
+        width: '75%',
+    },
+
+    ratingSpacer: {
+        width: 5,
+        backgroundColor:Colors.LIGHT_GREY
+    },
+
+    bookingRow: {
+        borderRadius: 2,
+        borderBottomColor: Colors.PRIMARY,
+        borderBottomWidth: 2,
+        padding: 0,
+        height: 'auto',
+    },
+
+    bookingContainer: {
+        marginTop: 2,
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 15,
+        paddingBottom: 15,
+        borderRadius: 10,
+        height: 'auto',
+        width: 200, // Fixing width for horizontal scroll
+    },
+
+    ContainerInfo:{
+    },
+
+    titleContainer: {
+        flexDirection: 'column',
+        textTransform: 'uppercase',
+        marginTop:10,
+        marginLeft:10
+    },
+    
+    bookingInfo:{
+        backgroundColor:Colors.LIGHT_GREY,
+        color:Colors.DARKGREY,
+        marginLeft:10,
+        marginBottom:5
+    },
+
+    acceptButton: {
+        backgroundColor:Colors.PRIMARY,
+        alignItems: 'center',
+        padding: 5,
+        borderRadius: 20,
+    },
+
+    acceptButtonText: {
+        color: 'white',
+    },
+
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        alignItems: 'center',        
     },
     modalContent: {
         backgroundColor: 'white',
@@ -201,11 +310,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         elevation: 5,
     },
-    bookingInfo: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        marginVertical: 5,
+    closeText: {
+        color: 'blue',
+        marginTop: 10,
     },
 });

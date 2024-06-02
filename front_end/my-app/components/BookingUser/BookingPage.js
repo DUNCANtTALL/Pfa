@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import RatingPage from '../Rating/Rating';
 
 import Colors from '../Utils/Colors';
+import { StatusBar } from 'expo-status-bar';
 
 export default function BookingPage({ route, navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
@@ -125,7 +126,7 @@ export default function BookingPage({ route, navigation }) {
     const getStatusStyle = (status) => {
         return {
             ...styles.statusBox,
-            backgroundColor: status === 'confirmed' ? 'green' : status === 'pending' ? 'red' : 'gray'
+            backgroundColor: status === 'confirmed' ? 'green' : status === 'pending' ? 'gray' : 'gray'
         };
     };
 
@@ -136,9 +137,9 @@ export default function BookingPage({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <AppBar />
-            <Divider width={1} />
+            <StatusBar style="auto" />
             <View style={styles.content}>
+                <AppBar />
                 <Text style={styles.title}>Your Bookings</Text>
                 <Divider width={1} />
                 {bookings.length === 0 ? (
@@ -152,17 +153,21 @@ export default function BookingPage({ route, navigation }) {
                             <View style={styles.bookingRow}>
                                 {item.map((booking) => (
                                     <View style={styles.booking} key={booking._id}>
+
+                                        <View style={getStatusStyle(booking.status)}>
+                                            <Text style={styles.statusText}>{booking.status}</Text>
+                                        </View>
+                                        
                                         <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteBooking(booking._id)}>
                                             <Icon name="trash" size={20} color="#fff" />
                                         </TouchableOpacity>
-                                        <Text style={styles.bookingTitle}>{booking.service}</Text>
-                                        <Text style={styles.bookingDetails}>Category: {booking.category}</Text>
-                                        <Text style={styles.bookingDetails}>Date: {formatDate(booking.date)}</Text>
-                                        <Text style={styles.bookingDetails}>City: {booking.city}</Text>
-                                        <Text style={styles.bookingDetails}>Price: {booking.price}</Text>
-                                        <Text style={styles.bookingDetails}>Provider: {providers[booking.serviceProvider]?.name || 'N/A'}</Text>
-                                        <View style={getStatusStyle(booking.status)}>
-                                            <Text style={styles.statusText}>{booking.status}</Text>
+                                        <View style={styles.Details}>
+                                            <Text style={styles.bookingTitle}>{booking.service}</Text>
+                                            <Text style={styles.bookingDetails}>Category: {booking.category}</Text>
+                                            <Text style={styles.bookingDetails}>Date: {formatDate(booking.date)}</Text>
+                                            <Text style={styles.bookingDetails}>City: {booking.city}</Text>
+                                            <Text style={styles.bookingDetails}>Price: {booking.price}</Text>
+                                            <Text style={styles.bookingDetails}>Provider: {providers[booking.serviceProvider]?.name || 'N/A'}</Text>
                                         </View>
                                         {booking.status === 'confirmed' && (
                                             <TouchableOpacity
@@ -198,7 +203,7 @@ export default function BookingPage({ route, navigation }) {
                     </View>
                 </View>
             </Modal>
-            <Divider width={1} />
+            <Divider width={2} />
             <BottomTabs />
         </SafeAreaView>
     );
@@ -214,18 +219,24 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         backgroundColor: Colors.PRIMARY,
+        paddingTop:30
+        
     },
     FlatList: {
         display: 'flex',
         flexDirection: 'column',
+        marginTop:10
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
         color: Colors.WHITE,
         backgroundColor: Colors.PRIMARY,
-        padding: 12,
+        marginLeft: 12,
+        marginRight:12,
+        marginBottom:5
     },
+
     noBookingText: {
         fontSize: 19,
         textAlign: 'center',
@@ -241,10 +252,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.BLACK,
         borderRadius: 25,
-        padding: 22,
+        padding: 0,
         backgroundColor: Colors.GREY,
         justifyContent: 'space-between',
     },
+
+    Details:{
+        paddingTop: 22,
+        paddingLeft: 18,
+        paddingRight: 18,
+        paddingBottom: 5,
+
+    },
+
     bookingTitle: {
         fontSize: 19,
         textTransform: 'uppercase',
@@ -253,6 +273,7 @@ const styles = StyleSheet.create({
         borderBlockColor: Colors.PRIMARY,
         fontWeight: 'bold',
         marginBottom: 9,
+        marginTop: 20,
         color: Colors.BLACK,
     },
     bookingDetails: {
@@ -263,7 +284,7 @@ const styles = StyleSheet.create({
     deleteButton: {
         position: 'absolute',
         top: 15,
-        right: 20,
+        right: 12,
         backgroundColor: Colors.PRIMARY,
         borderRadius: 15,
         width: 30,
@@ -271,30 +292,41 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+
     statusBox: {
+        position:'absolute',
+        top:20,
+        
+        margin:'auto',
+        width:'100%',
+        alignItems: 'center',
+    },
+
+    statusText: {
+        color: Colors.WHITE,
+        textTransform: 'uppercase',
+        fontSize:12
+    },
+    completeButton: {
         padding: 5,
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 5,
-    },
-    statusText: {
-        color: Colors.WHITE,
-        fontWeight: 'bold',
-    },
-    completeButton: {
+        backgroundColor: Colors.PRIMARY,
+        borderColor:Colors.BLACK,
+        borderWidth:1,
+        marginLeft: 10,
+        marginRight: 10,
         marginTop: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor: 'green',
-        borderRadius: 5,
-        alignItems: 'center',
-        alignSelf: 'flex-end',
+        marginBottom: 15,
+
     },
+    
     completeButtonText: {
         color: Colors.WHITE,
         fontWeight: 'bold',
     },
+
     ratingButton: {
         marginTop: 10,
         paddingVertical: 10,
@@ -304,21 +336,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'flex-end',
     },
+
     ratingButtonText: {
         color: Colors.WHITE,
         fontWeight: 'bold',
     },
+    
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+
     modalContent: {
         backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
+        padding: 15,
+        borderRadius: 20,
         alignItems: 'center',
-        elevation: 5,
+        elevation: 20,
+
+
     },
 });
