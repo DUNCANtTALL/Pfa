@@ -18,7 +18,9 @@ export default function CalendarPage({ navigation }) {
     const [time, setTime] = useState('');
     const [description, setDescription] = useState('');
     const [selectedEvent, setSelectedEvent] = useState(null);
-    const [client, setClient] = useState(null);
+    const [client, setClient] = useState();
+    const [loading, setLoading] = useState(true);
+
 
 
 
@@ -40,25 +42,31 @@ export default function CalendarPage({ navigation }) {
     }, []);
 
     useEffect(() => {
-        fetchEvents();
-    }, []);
-
-    const fetchEvents = async () => {
-        try {
-            const response = await axios.get(`http://192.168.100.17:5003/api/events/GetAll/${client}`);
-            const eventsData = response.data;
-            const newMarkedDates = {};
-            const newEvents = {};
-            eventsData.forEach(event => {
-                newMarkedDates[event.date] = { selected: true, marked: true, selectedColor: Colors.PRIMARY };
-                newEvents[event.date] = { time: event.time, description: event.description };
-            });
-            setMarkedDates(newMarkedDates);
-            setEvents(newEvents);
-        } catch (error) {
-            console.error('Error fetching events:', error);
+        if (client) {
+            const fetchEvents = async () => {
+                setLoading(true);
+                try {
+                    const response = await axios.get(`http://192.168.100.17:5003/api/events/GetAll/${client}`);
+                    const eventsData = response.data;
+                    const newMarkedDates = {};
+                    const newEvents = {};
+                    eventsData.forEach(event => {
+                        newMarkedDates[event.date] = { selected: true, marked: true, selectedColor: Colors.PRIMARY };
+                        newEvents[event.date] = { time: event.time, description: event.description };
+                    });
+                    setMarkedDates(newMarkedDates);
+                    setEvents(newEvents);
+                } catch (error) {
+                    console.error('Error fetching events:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchEvents();
         }
-    };
+    }, [client])
+
+   
     
 
     const onDayPress = (day) => {

@@ -12,7 +12,7 @@ export default function JobDetail() {
     const [providers, setProviders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [ratings, setRatings] = useState({});
-    const [bookings, setBookings] = useState([]);
+    const [bookings, setBookings] = useState({});
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -38,7 +38,11 @@ export default function JobDetail() {
             try {
                 const response = await fetch(`http://192.168.100.17:5003/api/bookings/user/${client}/providers`);
                 const data = await response.json();
-                setProviders(data);
+                const uniqueProviders = Array.from(new Set(data.map(provider => provider._id)))
+                    .map(id => {
+                        return data.find(provider => provider._id === id);
+                    });
+                setProviders(uniqueProviders);
             } catch (error) {
                 console.error('Error fetching providers:', error);
             } finally {
@@ -53,17 +57,30 @@ export default function JobDetail() {
     };
 
     useEffect(() => {
-        const fetchAppliedBookings = async (providerId) => {
-            try {
-                const response = await fetch(`http://192.168.100.17:5003/api/bookings/GetProviderByID/${providerId}`);
-                const data = await response.json();
-                setBookings(data);
-            } catch (error) {
-                console.error('Error fetching applied bookings:', error);
+        const fetchAppliedBookings = async (providerBookings) => {
+            const bookingDetails = [];
+            for (const bookingId of providerBookings) {
+                try {
+                    const response = await fetch(`http://192.168.100.17:5003/api/bookings/bookings/${bookingId}`);
+                    const data = await response.json();
+                    bookingDetails.push(data);
+                } catch (error) {
+                    console.error('Error fetching applied bookings:', error);
+                }
             }
+            return bookingDetails;
         };
 
-        providers.forEach(provider => fetchAppliedBookings(provider._id));
+        const fetchAllBookings = async () => {
+            const allBookings = {};
+            for (const provider of providers) {
+                const bookingDetails = await fetchAppliedBookings(provider.bookings);
+                allBookings[provider._id] = bookingDetails;
+            }
+            setBookings(allBookings);
+        };
+
+        fetchAllBookings();
     }, [providers]);
 
     useEffect(() => {
@@ -94,7 +111,8 @@ export default function JobDetail() {
             });
 
             if (response.ok) {
-                const updatedBookings = bookings.map(booking =>
+                const updatedBookings = { ...bookings };
+                updatedBookings[providerId] = updatedBookings[providerId].map(booking =>
                     booking._id === bookingId ? { ...booking, providerId, status: 'Assigned' } : booking
                 );
                 setBookings(updatedBookings);
@@ -142,18 +160,15 @@ export default function JobDetail() {
                                 </View>
 
                                 <View style={styles.ratingContainer}>
-
-                                        <Ionicons name='star' color='#F99A0E' size={20} padding={5} backgroundColor={Colors.LIGHT_GREY} />
-                                        <View style={styles.ratingSpacer}></View>
-                                        <Text backgroundColor={Colors.LIGHT_GREY} padding={5}>{ratings[provider._id]} </Text>
-
+                                    <Ionicons name='star' color='#F99A0E' size={20} padding={5} backgroundColor={Colors.LIGHT_GREY} />
+                                    <View style={styles.ratingSpacer}></View>
+                                    <Text backgroundColor={Colors.LIGHT_GREY} padding={5}>{ratings[provider._id]} </Text>
                                 </View>
                             </TouchableOpacity>
 
                             <ScrollView style={styles.bookingRow} horizontal>
-                                {bookings.map(booking => (
+                                {bookings[provider._id] && bookings[provider._id].map(booking => (
                                     <View key={booking._id} style={styles.bookingContainer}>
-
                                         <View style={styles.ContainerInfo}>
                                             <Text style={styles.titleContainer}>Date</Text>
                                             <Text style={styles.bookingInfo}>{formatDate(booking.date)}</Text>
@@ -202,6 +217,11 @@ export default function JobDetail() {
 }
 
 const styles = StyleSheet.create({
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     container: {
         marginTop: 2,
         paddingLeft: 12,
@@ -230,14 +250,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 10,
         marginBottom: 5,
-
     },
     providerEmail: {
         fontSize: 15,
         marginLeft: 15,
-        padding:5,
-        backgroundColor:Colors.LIGHT_GREY,
-
+        padding: 5,
+        backgroundColor: Colors.LIGHT_GREY,
     },
     ratingContainer: {
         flexDirection: 'row',
@@ -245,12 +263,10 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         width: '75%',
     },
-
     ratingSpacer: {
         width: 5,
-        backgroundColor:Colors.LIGHT_GREY
+        backgroundColor: Colors.LIGHT_GREY,
     },
-
     bookingRow: {
         borderRadius: 2,
         borderBottomColor: Colors.PRIMARY,
@@ -258,7 +274,6 @@ const styles = StyleSheet.create({
         padding: 0,
         height: 'auto',
     },
-
     bookingContainer: {
         marginTop: 2,
         paddingLeft: 12,
@@ -267,41 +282,34 @@ const styles = StyleSheet.create({
         paddingBottom: 15,
         borderRadius: 10,
         height: 'auto',
-        width: 200, // Fixing width for horizontal scroll
+        width: 200, // Fixed width for horizontal scroll
     },
-
-    ContainerInfo:{
-    },
-
+    ContainerInfo: {},
     titleContainer: {
         flexDirection: 'column',
         textTransform: 'uppercase',
-        marginTop:10,
-        marginLeft:10
+        marginTop: 10,
+        marginLeft: 10,
     },
-    
-    bookingInfo:{
-        backgroundColor:Colors.LIGHT_GREY,
-        color:Colors.DARKGREY,
-        marginLeft:10,
-        marginBottom:5
+    bookingInfo: {
+        backgroundColor: Colors.LIGHT_GREY,
+        color: Colors.DARKGREY,
+        marginLeft: 10,
+        marginBottom: 5,
     },
-
     acceptButton: {
-        backgroundColor:Colors.PRIMARY,
+        backgroundColor: Colors.PRIMARY,
         alignItems: 'center',
         padding: 5,
         borderRadius: 20,
     },
-
     acceptButtonText: {
         color: 'white',
     },
-
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',        
+        alignItems: 'center',
     },
     modalContent: {
         backgroundColor: 'white',

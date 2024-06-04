@@ -35,10 +35,7 @@ export default function Home({ navigation }) {
           response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCity/${searchInput}`);
         } else if (searchMethod === 'category') {
           response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCategory/${searchInput}`);
-          response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCity/${searchInput}`);
-        } else if (searchMethod === 'category') {
-          response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCategory/${searchInput}`);
-        }
+        } 
       } else {
         response = await axios.get('http://192.168.100.17:5003/api/bookings/GetAll');
       }
