@@ -6,7 +6,7 @@ import { Divider } from 'react-native-elements';
 import AppBar from './appbar';
 import BottomTabs from './bottom_tabs';
 import Details from './details';
-import Colors from '../../components/Utils/Colors';
+import Colors from '../Utils/Colors';
 
 export default function ProfilePage({ navigation }) {
     // Fonction pour gérer la déconnexion
@@ -23,7 +23,7 @@ export default function ProfilePage({ navigation }) {
                 <ScrollView>
                   <Details />
                   {/* Ajout des boutons */}
-                  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking')}>
+                  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('BookingUser')}>
                       <Text style={styles.buttonText}>My Bookings</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ContactUs')}>

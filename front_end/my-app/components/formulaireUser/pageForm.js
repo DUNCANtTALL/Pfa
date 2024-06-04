@@ -11,12 +11,9 @@ export default function PageForm() {
   return (
     <SafeAreaView style={{flex:1,marginTop:0}}>
       <StatusBar style="auto" />
-      <AppBar />
-      <Divider width={1}/>
-      <View style={{alignSelf:'center'}}></View>
-      <View style={{flex:1,borderTopRightRadius:20,borderTopLeftRadius:20}}>
-      <View style={{flexDirection:'row',alignItems:'center', justifyContent:'space-between', marginTop:20}}></View>
+      <View style={{flex:1, paddingTop:30}}>
       <ScrollView>
+        <AppBar />
         <Form/>
       </ScrollView>
       <Divider width={1}/>

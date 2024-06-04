@@ -1,10 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Colors from '../Utils/Colors';
 
 const RatingComponent = ({ booking }) => {
   const [rating, setRating] = useState(0);
+  const [client, setClient] = useState(null);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const getClientId = async () => {
+      try {
+        const storedClientId = await AsyncStorage.getItem('userId');
+        if (storedClientId) {
+          setClient(storedClientId);
+        } else {
+          console.error('Client ID not found in AsyncStorage');
+        }
+      } catch (error) {
+        console.error('Error fetching client ID from AsyncStorage:', error);
+      }
+    };
+    getClientId();
+  }, []);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!client) return;
+
+      try {
+        const response = await axios.get(`http://192.168.17.230:5003/api/users/getByID/${client}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+    fetchUserData();
+  }, [client]);
 
   const handleRating = (rate) => {
     setRating(rate);
@@ -17,12 +51,23 @@ const RatingComponent = ({ booking }) => {
     }
 
     try {
+
+
       // Send rating to the backend
-      const response = await axios.post('http://192.168.100.17:5003/api/ratings/Add', {
+      const response = await axios.post('http://192.168.17.230:5003/api/ratings/Add', {
         ratedUser: booking.serviceProvider,
         rating: rating,
       });
-      console.log('Rating submitted successfully:', response.data);
+
+      // Create a notification for the provider
+      await axios.post('http://192.168.17.230:5003/api/notifications/Add', {
+        recipient: booking.serviceProvider,
+        type: 'rating',
+        content: `You have received a new rating of ${rating} stars from ${user.name}`,
+        read: false,
+      });
+
+      console.log('Rating and notification submitted successfully:', response.data);
       Alert.alert('Rating submitted successfully.');
     } catch (error) {
       console.error('Error submitting rating:', error);
@@ -46,7 +91,7 @@ const RatingComponent = ({ booking }) => {
           </TouchableOpacity>
         ))}
       </View>
-      
+
       <TouchableOpacity style={styles.submitButton} onPress={submitRating}>
         <Text style={styles.submitButtonText}>Submit Rating</Text>
       </TouchableOpacity>
@@ -61,20 +106,20 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
-    elevation: 5,
+    elevation: 10,
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 25,
+    marginBottom: 10,
   },
   stars: {
     flexDirection: 'row',
     marginBottom: 20,
   },
   submitButton: {
-    backgroundColor: 'blue',
+    backgroundColor: Colors.DARKPRIMARY,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 20,
   },
   submitButtonText: {
     color: 'white',

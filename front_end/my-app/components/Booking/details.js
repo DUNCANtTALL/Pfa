@@ -9,7 +9,7 @@ export default function Details({ booking }) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`http://192.168.1.3:5003/api/users/getByID/${booking.client}`);
+                const response = await axios.get(`http://192.168.17.230:5003/api/users/getByID/${booking.client}`);
                 setUser(response.data);
             } catch (error) {
                 console.error('Error fetching user details:', error);
@@ -59,29 +59,31 @@ const isDesktop = width >= 600 || height >= 1024;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop:5
+        margin:5,
     },
 
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft:5
-
+        paddingLeft:10,
+        paddingRight:10,
+        
     },
 
     jobTitle: {
         fontSize: 19,
         textTransform: 'uppercase',
+        paddingBottom: 5,
         borderBottomWidth: 1,
-        borderBottomColor: Colors.BLACK,
+        borderBlockColor: Colors.PRIMARY,
         fontWeight: 'bold',
-        marginBottom: 15,
+        marginBottom: 9,
         color: Colors.BLACK,
     },
 
     infoContainer: {
         flex: 1,
-        backgroundColor: Colors.Grey,
+        backgroundColor: Colors.WHITE,
         borderColor: Colors.BLACK,
         borderRadius: 25,
         paddingTop: 8,
@@ -93,22 +95,27 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         borderRadius: 25,
         borderWidth:2,
+        
     },
 
     infoBox: {
         flex: 1,
+        
     },
 
     infoLabel: {
         fontSize: 14,
         fontWeight: 'bold',
         color: Colors.BLACK,
-        
+        textTransform: 'uppercase',
+
     },
 
     infoText: {
         fontSize: 14,
         marginBottom: 5,
-        color: '#555',
+        color: Colors.DARKGREY,
+        backgroundColor:Colors.LIGHT_GREY
+        
     },
 });

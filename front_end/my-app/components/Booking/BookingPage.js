@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Colors from '../Utils/Colors';
 import { Divider } from 'react-native-elements';
+import { StatusBar } from 'expo-status-bar';
 
 export default function BookingPage({ route, navigation }) {
     const [bookings, setBookings] = useState([]);
@@ -31,7 +32,7 @@ export default function BookingPage({ route, navigation }) {
     useEffect(() => {
         const fetchAppliedBookings = async () => {
           try {
-            const response = await axios.get(`http://192.168.100.17:5003/api/bookings/applied/${client}`);
+            const response = await axios.get(`http://192.168.17.230:5003/api/bookings/applied/${client}`);
             setBookings(response.data);
           } catch (error) {
             console.error('Error fetching applied bookings:', error);
@@ -42,10 +43,10 @@ export default function BookingPage({ route, navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <AppBar />
-            <Divider width={1} />
+            <StatusBar style="auto" />
             <View style={styles.content}>
-                <Text style={styles.title}>Saved Jobs</Text>
+            {<AppBar/>}
+                <Text style={styles.title}>Saved Jobs </Text>
                 <Divider width={1} />
                 <ScrollView>
                     {bookings.map((booking, index) => (
@@ -53,7 +54,7 @@ export default function BookingPage({ route, navigation }) {
                     ))}
                 </ScrollView>
             </View>
-            <Divider width={1} />
+            <Divider width={2} />
             <BottomTabs />
         </SafeAreaView>
     );
@@ -68,12 +69,18 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        backgroundColor:Colors.PRIMARY
+        backgroundColor:Colors.PRIMARY,
+        paddingTop:30,
     },
+    
     title: {
-        fontSize: 20,
+        fontSize: 22,
+        textTransform: 'uppercase',
         fontWeight: 'bold',
         color: Colors.WHITE,
-        padding: 12,
+        backgroundColor: Colors.PRIMARY,
+        paddingLeft: 12,
+        paddingBottom: 5,
+
     },
 });

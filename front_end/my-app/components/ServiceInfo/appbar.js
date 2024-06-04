@@ -6,6 +6,7 @@ import {Ionicons} from 'react-native-vector-icons'
 import { Badge } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import Colors from '../Utils/Colors';
 
 
 export default function AppBar(){
@@ -35,7 +36,7 @@ export default function AppBar(){
       if (!client) return;
 
       try {
-        const response = await axios.get(`http://192.168.100.17:5003/api/users/getByID/${client}`);
+        const response = await axios.get(`http://192.168.17.230:5003/api/users/getByID/${client}`);
         setUser(response.data);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -48,22 +49,17 @@ export default function AppBar(){
           <View style={styles.appbar}>
             {/* Greetings and name */}
             <View>
-              <Text style={{color:'grey'}}>Bonjour</Text>
-              <Text style={{fontSize:18,fontWeight:'bold'}}>{user.name} </Text>
+              <Text style={{fontSize:0,color:Colors.GREY}}>Bonjour</Text>
+              <Text style={{fontSize:0,fontWeight:'bold'}}>{user.name} </Text>
             </View>
             {/* ratings and notification */}
-       <View style={{
-                flexDirection:'row', 
-                alignItems:'center',
-                paddingHorizontal:10,
-                }}>    
-         </View>
       <View>
            <Ionicons
-              style={{backgroundColor:'white',padding:6,}} 
+              style={{padding:5}} 
               name = 'notifications-outline' 
-              size={22}/>
-           <Badge status="error" value={3} containerStyle={{ position: 'absolute', top: -4, right: -4, }} />
+              size={24}
+              />
+           <Badge status="error" value={99}  containerStyle={{position: 'absolute', top: -5, right: -6 }} />
       </View>
             </View>
       );
@@ -73,21 +69,13 @@ const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
 const styles = StyleSheet.create({
     appbar:{
-      width: isDesktop ? '40%' : "95%",
+      width: isDesktop ? '40%' : "90%",
       alignItems: 'center',
       alignSelf:'center',
       flexDirection:'row',
       justifyContent:'space-between',
-      margin:10,
-      paddingTop:10
+      paddingLeft:10,
+      paddingRight:10,
+      paddingTop:10,
     },
-    rating:{
-      backgroundColor: 'white', 
-      alignItems:'center',
-      justifyContent:'center',
-      borderRadius:10,
-      paddingHorizontal:20,
-      paddingVertical:10,
-      margin:7
-      },
   });

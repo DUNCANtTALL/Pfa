@@ -31,7 +31,7 @@ export default function BookingPage({ route, navigation }) {
                     text: 'Yes',
                     onPress: async () => {
                         try {
-                            await axios.delete(`http://192.168.100.17:5003/api/bookings/Delete/${id}`);
+                            await axios.delete(`http://192.168.17.230:5003/api/bookings/Delete/${id}`);
                             setBookings(bookings.filter((booking) => booking._id !== id));
                         } catch (error) {
                             console.error('Error deleting booking:', error);
@@ -45,7 +45,7 @@ export default function BookingPage({ route, navigation }) {
 
     const handleCompleteBooking = async (booking) => {
         try {
-            await axios.put(`http://192.168.100.17:5003/api/bookings/Complete/${booking._id}`);
+            await axios.put(`http://192.168.17.230:5003/api/bookings/Complete/${booking._id}`);
             setBookings(bookings.map((b) =>
                 b._id === booking._id ? { ...b, status: 'Completed' } : b
             ));
@@ -73,7 +73,7 @@ export default function BookingPage({ route, navigation }) {
         const fetchBookings = async () => {
             if (client) {
                 try {
-                    const response = await axios.get(`http://192.168.100.17:5003/api/bookings/bookings/user/${client}`);
+                    const response = await axios.get(`http://192.168.17.230:5003/api/bookings/bookings/user/${client}`);
                     setBookings(response.data);
                 } catch (error) {
                     console.error('Error fetching bookings:', error);
@@ -92,7 +92,7 @@ export default function BookingPage({ route, navigation }) {
             const fetchedProviders = {};
             for (const id of uniqueProviderIds) {
                 try {
-                    const response = await axios.get(`http://192.168.100.17:5003/api/users/getByID/${id}`);
+                    const response = await axios.get(`http://192.168.17.230:5003/api/users/getByID/${id}`);
                     fetchedProviders[id] = response.data;
                 } catch (error) {
                     console.error('Error fetching provider:', error);

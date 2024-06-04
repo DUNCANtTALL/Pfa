@@ -64,7 +64,7 @@ export default function Formulaire({ navigation }) {
     };
 
     try {
-      const response = await axios.post('http://192.168.100.17:5003/api/bookings/Add', formData);
+      const response = await axios.post('http://192.168.17.230:5003/api/bookings/Add', formData);
 
       if (response.status === 201) {
         Alert.alert('Success', 'Form submitted successfully');
@@ -148,14 +148,16 @@ export default function Formulaire({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingLeft: 22,
-    paddingRight: 22,
-    
+    paddingLeft: 28,
+    paddingRight: 28,
+    marginTop:10
   },
+
   Submit: {
     marginTop :30,
     alignItems:'end',
   },
+
   label: {
     fontSize: 18,
     marginBottom: 3,

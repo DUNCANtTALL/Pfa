@@ -40,7 +40,7 @@ router.get('/Avg/:providerId', async (req, res) => {
 
     // Calculate the average rating
     const totalRating = ratings.reduce((sum, rating) => sum + rating.rating, 0);
-    const averageRating = totalRating / ratings.length;
+    const averageRating = (totalRating / ratings.length).toFixed(1);
 
     res.status(200).json({averageRating });
   } catch (error) {

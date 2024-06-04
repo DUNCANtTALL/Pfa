@@ -1,135 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import EditImageButton from './EditButton';
+// Details.js
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import Colors from '../Utils/Colors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import AppBar from './appbar';
+import { Icon } from 'react-native-elements';
 
+export default function Details({ job, handleSaveJob, handleApply, savedJobs }) {
+    const isSaved = savedJobs.includes(job);
 
-export default function Details() {
-  const [client, setClient] = useState();
-  const [user, setUser] = useState({});
-  const [rating, setRating] = useState();
+    return (
+        <View style={styles.container   } >
+            <View style={styles.img}>
+                <Image source={require('../assets/painter.jpg')} style={styles.photo} />
+            </View>
+            <View style={styles.userInfo}>
+                <Text style={styles.name}>{job}</Text>
+            </View>
+            {/* Grande zone de description */}
+            <View style={styles.descriptionContainer}>
+                <Text style={styles.descriptionTitle}>Description:</Text>
+                <Text style={styles.descriptionText}>
+                    {/* Placeholder pour les informations détaillées sur le service */}
+                    Nom Prenom {'\n'}
+                    Catégorie: Peinture {'\n'}
+                    Prix: 2400DH {'\n'}
+                    Autres informations...
+                </Text>
+            </View>
 
-  useEffect(() => {
-    const getClientId = async () => {
-      try {
-        const storedClientId = await AsyncStorage.getItem('userId');
-        if (storedClientId) {
-          setClient(storedClientId);
-        } else {
-          console.error('Client ID not found in AsyncStorage');
-        }
-      } catch (error) {
-        console.error('Error fetching client ID from AsyncStorage:', error);
-      }
-    };
-    getClientId();
-  }, []);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-
-      try {
-        const response = await axios.get(`http://192.168.100.17:5003/api/users/getByID/${client}`);
-        setUser(response.data);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-    fetchUserData();
-  }, [client]);
-
-  useEffect(() => {
-    const fetchRating = async () => {
-      if (!client) return;
-  
-      try {
-        const response = await axios.get(`http://192.168.100.17:5003/api/ratings/Avg/${client}`);
-        let data = response.data.averageRating;
-        setRating(data.toFixed(2));
-      } catch (error) {
-        console.error('Error fetching rating:', error);
-      }
-    };
-    fetchRating();
-  }, [client]);
-  
-
-  return (
-    <View style={styles.container}>
-      <AppBar />
-      <View style={styles.img}>
-        <Image source={require('../assets/painter.jpg')} style={styles.photo} />
-        <EditImageButton />
-      </View>
-      <View style={styles.userInfo}>
-        <Text style={styles.name}>Name: {user.name}</Text>
-        <Text style={styles.email}>Email: {user.email}</Text>
-        <View style={styles.rating}>
+            {/* Enregistrer le container */}
+            <TouchableOpacity
+                style={[styles.saveButton, { top: 10, right: 10 }, isSaved && { backgroundColor: 'grey' }]}
+                onPress={() => handleSaveJob(job)}
+            >
+                <Icon name={isSaved ? 'bookmark' : 'bookmark-o'} type='font-awesome' color='white' size={20} />
+            </TouchableOpacity>
+            
+            {/* Appliquer */}
+            <TouchableOpacity onPress={handleApply} style={[styles.applyButton, { width: '100%' }]}>
+                <Text style={styles.buttonText}>Apply</Text>
+            </TouchableOpacity>
+            
         </View>
-      </View>
-    </View>
-  );
+    );
 }
 
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: isDesktop ? '30%' : '100%',
-    alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: Colors.PRIMARY,
-    paddingTop: 30,
-    paddingBottom: 30,
-    marginTop: 0,
-    borderBottomWidth:1,
-    borderColor:Colors.BLACK
-  },
-  photo: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 20,
-  },
-  img: {
-    flexDirection: 'row',
-  },
-  userInfo: {
-    alignItems: 'center',
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 6,
-    color: Colors.WHITE,
-  },
-  email: {
-    fontSize: 16,
-    marginBottom: 6,
-    color: Colors.WHITE,
-  },
-  rating: {
-    flexDirection: 'row',
-    backgroundColor: Colors.GREY,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 15,
-    borderWidth:2,
-    borderColor:Colors.BLACK
-  },
-  star: {
-    flexDirection: 'row',
-    fontWeight: 'bold',
-    color:Colors.YELLOW
-  },
-  ratText: {
-    fontWeight: 'bold',
-    color: Colors.BLACK,
-  },
+    container: {
+        display:'flex',
+        flex: 1,
+        width: isDesktop ? '50%' : '90%',
+        backgroundColor: Colors.PRIMARY,
+        padding: 20,
+        borderRadius: 10,
+        marginTop: 10,
+        alignSelf: 'center',
+    },
+
+    photo: {
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        marginBottom: 20,
+    },
+
+    img: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'center',
+    },
+
+    userInfo: {
+        alignItems: 'center',
+    },
+
+    name: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: Colors.WHITE,
+    },
+
+    saveButton: {
+        position: 'absolute',
+        backgroundColor: '#529A69',
+        padding: 15,
+        borderRadius: 5,
+    },
+
+    applyButton: {
+        backgroundColor: '#529A69',
+        padding: 15,
+        borderRadius: 5,
+        marginBottom: 10,
+        marginTop: 15,
+        alignItems: 'center',
+    },
+
+    buttonText: {
+        color: Colors.WHITE,
+        fontWeight: 'bold',
+        
+    },
+
+    descriptionContainer: {
+        marginTop: 10,
+    },
+
+    descriptionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: Colors.WHITE,
+    },
+
+    descriptionText: {
+        fontSize: 15,
+        color: Colors.WHITE,
+        alignSelf: 'center',
+    },
+
 });

@@ -1,11 +1,10 @@
 // BottomTabs.js
 import React from 'react';
 import { View, Text, TouchableOpacity ,Dimensions} from 'react-native';
-import { Icon, colors } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 
 import Colors from '../../components/Utils/Colors';
-import { color } from 'react-native-elements/dist/helpers';
 
 const { width, height } = Dimensions.get('window');
 const isDesktop = width >= 600 || height >= 1024;
@@ -35,7 +34,7 @@ export default function BottomTabs() {
     {
       icon: 'person-outline',
       text: 'Profile',
-      color:colors.primary,
+      color: Colors.PRIMARY,
       screen: 'Profile', // Specify the screen to navigate to when this icon is pressed
     },
   ];

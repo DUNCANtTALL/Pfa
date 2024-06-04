@@ -15,7 +15,6 @@ export default function RatingPage({ booking, navigation }) {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
                         <ScrollView>
-                            <AppBar />
                             <Details booking={booking} />
                             <RatingComponent booking={booking} />
                         </ScrollView>

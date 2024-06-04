@@ -14,7 +14,9 @@ import LoginScreen from './components/Login&SignUp/LoginScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Form from './components/formulaireUser/formulaire';
+import Notifications from './components/notification/notifications';
 import ProfilePage from './components/Profile/ProfilePage';
+import ProfileClient from './components/ProfileClient/ProfilePage';
 import  BookingPage  from './components/Booking/BookingPage';
 import ServiceProfile from './components/ServiceInfo/ServicePage';
 import CalendarPage from './components/Calendar/CalendarPage';
@@ -63,6 +65,14 @@ export default function App() {
                     <Stack.Screen 
                     name="Profile" 
                     component={ProfilePage} 
+                    options={{ headerShown: false }} />
+                    <Stack.Screen 
+                    name="notification" 
+                    component={Notifications} 
+                    options={{ headerShown: false }} />
+                    <Stack.Screen 
+                    name="ProfileClient" 
+                    component={ProfileClient} 
                     options={{ headerShown: false }} />
                     <Stack.Screen 
                     name="Calendar" 

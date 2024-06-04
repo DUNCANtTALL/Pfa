@@ -20,7 +20,7 @@ export default function Home({ navigation }) {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get('http://192.168.100.17:5003/api/bookings/GetAll');
+      const response = await axios.get('http://192.168.17.230:5003/api/bookings/GetAll');
       setBookings(response.data);
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -32,12 +32,15 @@ export default function Home({ navigation }) {
       let response;
       if (searchInput.trim()) {
         if (searchMethod === 'city') {
-          response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCity/${searchInput}`);
+          response = await axios.get(`http://192.168.17.230:5003/api/bookings/GetByCity/${searchInput}`);
         } else if (searchMethod === 'category') {
-          response = await axios.get(`http://192.168.100.17:5003/api/bookings/GetByCategory/${searchInput}`);
-        } 
+          response = await axios.get(`http://192.168.17.230:5003/api/bookings/GetByCategory/${searchInput}`);
+          response = await axios.get(`http://192.168.17.230:5003/api/bookings/GetByCity/${searchInput}`);
+        } else if (searchMethod === 'category') {
+          response = await axios.get(`http://192.168.17.230:5003/api/bookings/GetByCategory/${searchInput}`);
+        }
       } else {
-        response = await axios.get('http://192.168.100.17:5003/api/bookings/GetAll');
+        response = await axios.get('http://192.168.17.230:5003/api/bookings/GetAll');
       }
       setBookings(response.data);
     } catch (error) {

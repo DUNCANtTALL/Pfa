@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity ,Dimensions} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
+
 import Colors from '../../components/Utils/Colors';
 
 const { width, height } = Dimensions.get('window');
@@ -15,26 +16,26 @@ export default function BottomTabs() {
     {
       icon: 'home',
       text: 'Home',
-      color: 'grey',
+      color:"grey",
       screen: 'homeClient', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'search',
       text: 'Trouver service',
-      color: Colors.PRIMARY,
+      color: 'grey',
       screen: 'form', // Specify the screen to navigate to when this icon is pressed
     },
     {
       icon: 'bookmark-outline',
-      text: 'Booking',
+      text: 'Travaux',
       color: 'grey',
       screen: 'BookingUser', // Specify the screen to navigate to when this icon is pressed
     },
     {
-        icon: 'person-outline',
-        text: 'Profile',
-        color: 'grey',
-        screen: 'ProfileClient', // Specify the screen to navigate to when this icon is pressed
+      icon: 'person-outline',
+      text: 'Profile',
+      color: Colors.PRIMARY,
+      screen: 'ProfileClient', // Specify the screen to navigate to when this icon is pressed
     },
   ];
 
@@ -43,7 +44,7 @@ export default function BottomTabs() {
   };
 
   return (
-    <View style={{ flexDirection: 'row', margin: 10, marginHorizontal: 30, justifyContent: 'space-between',width: isDesktop ? '40%' : "90%", alignItems: 'center', alignSelf:'center' }}>
+    <View style={{ flexDirection: 'row', margin: 10, marginHorizontal: 30, justifyContent: 'space-between' ,width: isDesktop ? '40%' : "90%", alignItems: 'center', alignSelf:'center',}}>
       {icons.map((icon, i) => (
         <Icons key={i} {...icon} onPress={() => handleIconPress(icon.screen)} />
       ))}

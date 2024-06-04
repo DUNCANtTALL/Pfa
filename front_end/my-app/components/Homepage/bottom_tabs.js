@@ -38,7 +38,7 @@ export default function BottomTabs() {
         icon: 'person-outline',
         text: 'Profile',
         color: 'grey',
-        screen: 'ServiceProfile', // Specify the screen to navigate to when this icon is pressed
+        screen: 'ProfileClient', // Specify the screen to navigate to when this icon is pressed
     },
   ];
 

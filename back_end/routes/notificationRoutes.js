@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Notification } = require('../models/notification');
+const Notification = require('../models/Notification');
 
+// Define routes here
 router.get('/', async (req, res) => {
   try {
     const notifications = await Notification.find();
@@ -24,19 +25,43 @@ router.get('/:id', getNotification, (req, res) => {
   res.json(res.notification);
 });
 
-router.post('/', async (req, res) => {
-  const notification = new Notification({
-    recipient: req.body.recipient,
-    type: req.body.type,
-    content: req.body.content,
-    read: req.body.read || false
-  });
+// router.post('/Add', async (req, res) => {
+//   const notification = new Notification({
+//     recipient: req.body.recipient,
+//     type: req.body.type,
+//     content: req.body.content,
+//     read: req.body.read || false,
+//   });
 
+//   try {
+//     const newNotification = await notification.save();
+//     res.status(201).json(newNotification);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// });
+router.post('/Add', async (req, res) => {
   try {
-    const newNotification = await notification.save();
-    res.status(201).json(newNotification);
+    // Extract data from request body
+    const { recipient, type , content ,read} = req.body;
+
+    // Create a new Rating document
+    const newNoti = new Notification({
+      recipient,
+      type,
+      content,
+      read
+    });
+
+    
+    const savedNoti = await newNoti.save();
+
+    // Send response indicating success
+    res.status(201).json(savedNoti);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    // Handle errors
+    console.error('Error submitting Notification:', error);
+    res.status(500).json({ error: 'An error occurred while submitting the Notif.' });
   }
 });
 

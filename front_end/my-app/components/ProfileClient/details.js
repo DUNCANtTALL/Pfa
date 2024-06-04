@@ -9,9 +9,9 @@ import AppBar from './appbar';
 
 
 export default function Details() {
-  const [client, setClient] = useState();
+  const [client, setClient] = useState(null);
   const [user, setUser] = useState({});
-  const [rating, setRating] = useState();
+
 
   useEffect(() => {
     const getClientId = async () => {
@@ -31,6 +31,7 @@ export default function Details() {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!client) return;
 
       try {
         const response = await axios.get(`http://192.168.17.230:5003/api/users/getByID/${client}`);
@@ -41,22 +42,6 @@ export default function Details() {
     };
     fetchUserData();
   }, [client]);
-
-  useEffect(() => {
-    const fetchRating = async () => {
-      if (!client) return;
-  
-      try {
-        const response = await axios.get(`http://192.168.1.4:5003/api/ratings/Avg/${client}`);
-        let data = response.data.averageRating;
-        setRating(data.toFixed(2));
-      } catch (error) {
-        console.error('Error fetching rating:', error);
-      }
-    };
-    fetchRating();
-  }, [client]);
-  
 
   return (
     <View style={styles.container}>
@@ -69,11 +54,6 @@ export default function Details() {
         <Text style={styles.name}>Name: {user.name}</Text>
         <Text style={styles.email}>Email: {user.email}</Text>
         <View style={styles.rating}>
-          <Text>Rating: </Text>
-          <View style={styles.star}>
-            <Ionicons name="star" color={Colors.YELLOW} size={20} />
-            <Text style={styles.ratText}>{rating}</Text>
-          </View>
         </View>
       </View>
     </View>

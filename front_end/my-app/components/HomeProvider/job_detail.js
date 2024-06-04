@@ -7,7 +7,21 @@ import Colors from '../Utils/Colors';
 
 export default function JobDetail({ booking, onApply }) {
   const [client, setClient] = useState(null);
+  const [user, setUser] = useState({});
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!client) return;
+
+      try {
+        const response = await axios.get(`http://192.168.17.230:5003/api/users/getByID/${client}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+    fetchUserData();
+  }, [client]);
   useEffect(() => {
     const getClientId = async () => {
       try {
@@ -32,7 +46,7 @@ export default function JobDetail({ booking, onApply }) {
     }
 
     try {
-      const response = await axios.post('http://192.168.100.17:5003/api/bookings/apply', {
+      const response = await axios.post('http://192.168.17.230:5003/api/bookings/apply', {
         bookingId: booking._id,
         providerId: client,
       });
@@ -40,13 +54,20 @@ export default function JobDetail({ booking, onApply }) {
       if (onApply && typeof onApply === 'function') {
         onApply(response.data);
       }
+      await axios.post('http://192.168.17.230:5003/api/notifications/Add', {
+        recipient: booking.client,
+        type: 'booking_accepted', 
+        content: `Your booking request for "${booking.service}" has been accepted by ${user.name}.`,
+        read: false
+      });
 
-      Alert.alert('Success', 'You have applied for the booking.');
+      Alert.alert('Success', 'You have applied for the booking and client has been notified.');
     } catch (error) {
-      console.error('Error applying for booking:', error);
-      Alert.alert('Error', 'Failed to apply for the booking.');
+      console.error('Error applying for booking or Notification:', error);
+      Alert.alert('Error', 'Failed to apply for the booking or Notification.');
     }
   };
+  
 
   return (
     <View style={styles.container}>
